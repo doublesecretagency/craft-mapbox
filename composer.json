@@ -1,0 +1,44 @@
+{
+    "name": "doublesecretagency/craft-mapbox",
+    "description": "Maps in minutes. Powered by the Mapbox API.",
+    "type": "craft-plugin",
+    "version": "1.0.0-beta",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "mapbox-api",
+        "mapbox",
+        "map",
+        "proximity-search",
+        "geolocation",
+        "geocoding",
+        "address",
+        "locations"
+    ],
+    "support": {
+        "docs": "https://plugins.doublesecretagency.com/mapbox",
+        "issues": "https://github.com/doublesecretagency/craft-mapbox/issues"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Double Secret Agency",
+            "homepage": "https://plugins.doublesecretagency.com"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^4.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "doublesecretagency\\mapbox\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Mapbox",
+        "handle": "mapbox",
+        "class": "doublesecretagency\\mapbox\\MapboxPlugin"
+    }
+}
