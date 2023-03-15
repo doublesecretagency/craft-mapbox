@@ -1,0 +1,9 @@
+<script>
+    // Transfer PHP data to JavaScript via Twig
+    const addressFieldSettingsConfig = {{ config|json_encode|raw }};
+</script>
+
+{# Initialize field settings on page load #}
+{% js 'initAddressFieldSettings();' %}
+
+<div id="address-settings-container" class="address-settings-container"></div>

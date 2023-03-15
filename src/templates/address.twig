@@ -1,0 +1,20 @@
+<script>
+    // Ensure Address field config array exists
+    if ('undefined' === typeof addressFieldConfigs) {
+        addressFieldConfigs = [];
+    }
+
+    // Transfer PHP data to JavaScript via Twig
+    addressFieldConfigs.push({{ config|json_encode|raw }});
+
+    // Re-initialize the field on secondary loads
+    // (ie: slideouts & Matrix blocks)
+    if ('function' === typeof initAddressField) {
+        initAddressField();
+    }
+</script>
+
+{# Initialize field on page load #}
+{% js 'initAddressField();' %}
+
+<div id="{{ config.namespace.handle }}"></div>

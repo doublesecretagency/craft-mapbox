@@ -1,0 +1,44 @@
+{% import '_includes/forms' as forms %}
+{% set autosuggest = 'mapbox/_form/autosuggest' %}
+{% set dropdown = 'mapbox/_form/select' %}
+
+{# Whether to display the page in "Welcome" mode #}
+{% set welcome = craft.app.request.getQueryParam('welcome') %}
+
+{# Path to documentation #}
+{% set docs = 'https://plugins.doublesecretagency.com/mapbox' %}
+
+{# Show intro message #}
+{% if welcome %}
+    {% set iconUrl = view.getAssetManager().getPublishedUrl('@doublesecretagency/mapbox/icon.svg', true) %}
+    <div class="pane" style="">
+        <img src="{{ iconUrl }}" alt="" width="120" style="float:left; margin:12px;">
+        <div style="padding-left: 160px">
+            <h2>Welcome! Thanks for using the Mapbox plugin. &nbsp;🎉</h2>
+            <p>Follow the instructions below to get started. If you haven't already, take a look at our <a href="{{ docs }}/" target="_blank">complete documentation...</a></p>
+            <p><strong>Create and add a Mapbox Access Token.</strong> See the instructions for <a href="{{ docs }}/getting-started/access-token/" target="_blank">how to create a Mapbox Access Token</a>. This token is required in order to ping the Mapbox API.</p>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+
+    <hr>
+{% endif %}
+
+<h2>Mapbox Access Token</h2>
+<p>In order to use the Mapbox API services, an Access Token is required.</p>
+<p>For full details, please consult the documentation regarding the <a href="{{ docs }}/getting-started/access-token/" target="_blank">Mapbox Access Token</a>.</p>
+{% include autosuggest with {
+    config: {
+        label: "Mapbox Access Token"|t('mapbox'),
+        name: 'accessToken',
+        required: true
+    }
+} %}
+
+{#{% if not welcome %}#}
+{#    <div class="readable">#}
+{#        <blockquote class="note tip">#}
+{#            <p>Experiencing issues? <a href="{{ cpUrl('utilities/test-mapbox-access-token') }}">Test the Mapbox Access Token.</a></p>#}
+{#        </blockquote>#}
+{#    </div>#}
+{#{% endif %}#}
