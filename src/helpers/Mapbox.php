@@ -16,9 +16,6 @@ use craft\base\Element;
 use craft\web\View;
 use doublesecretagency\mapbox\models\DynamicMap;
 use doublesecretagency\mapbox\models\Location;
-use doublesecretagency\mapbox\models\Lookup;
-use doublesecretagency\mapbox\models\StaticMap;
-use GuzzleHttp\Exception\GuzzleException;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 
@@ -98,11 +95,11 @@ class Mapbox
     /**
      * Create a new Dynamic Map object.
      *
-     * @param array|Element|Location $locations
+     * @param array|Element|Location|null $locations
      * @param array $options
      * @return DynamicMap
      */
-    public static function map(array|Element|Location $locations = [], array $options = []): DynamicMap
+    public static function map(array|Element|Location|null $locations = [], array $options = []): DynamicMap
     {
         // Create a new map object
         $map = new DynamicMap($locations, $options);
@@ -136,29 +133,12 @@ class Mapbox
     }
 
     // ========================================================================= //
-    // Static Maps
-    // https://plugins.doublesecretagency.com/mapbox/static-maps/
-    // ========================================================================= //
-
-    /**
-     * Create a new Static Map object.
-     *
-     * @param array|Element|Location $locations
-     * @param array $options
-     * @return StaticMap
-     */
-    public static function img(array|Element|Location $locations = [], array $options = []): StaticMap
-    {
-        return new StaticMap($locations, $options);
-    }
-
-    // ========================================================================= //
     // API Service
     // https://plugins.doublesecretagency.com/mapbox/helper/api/
     // ========================================================================= //
 
     /**
-     * Get the Mapbox API URL.
+     * Get a Mapbox API URL.
      *
      * @param string $service
      * @param array $params
