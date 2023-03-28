@@ -67,7 +67,7 @@ class Install extends Migration
             'country'     => $this->string(),
             'lng'         => $this->decimal(12, 8),
             'lat'         => $this->decimal(12, 8),
-            'zoom'        => $this->tinyInteger(2),
+            'zoom'        => $this->decimal(4, 2),
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid'         => $this->uid(),

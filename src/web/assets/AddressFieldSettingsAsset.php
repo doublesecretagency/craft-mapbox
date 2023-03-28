@@ -12,9 +12,6 @@
 namespace doublesecretagency\mapbox\web\assets;
 
 use craft\web\AssetBundle;
-use craft\web\assets\cp\CpAsset;
-use craft\web\assets\vue\VueAsset;
-use doublesecretagency\mapbox\helpers\Mapbox;
 
 /**
  * Class AddressFieldSettingsAsset
@@ -32,19 +29,10 @@ class AddressFieldSettingsAsset extends AssetBundle
 
         $this->sourcePath = '@doublesecretagency/mapbox/web/assets/dist';
         $this->depends = [
-            CpAsset::class,
-            VueAsset::class,
-        ];
-
-        $this->css = [
-            'css/address.css',
+            AddressFieldAsset::class,
         ];
 
         $this->js = [
-            Mapbox::getApiUrl('search', [
-//                'libraries' => 'places',
-//                'callback' => 'initAddressFieldSettings',
-            ]),
             'js/Sortable.min.js',
             'js/address-settings.js',
         ];

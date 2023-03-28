@@ -912,7 +912,7 @@ function DynamicMap(locations, options) {
 
         // If default center is not valid
         if (!this._validCoords(this._d.center)) {
-            // After a small delay
+            // After a tiny delay
             setTimeout(() => {
                 // Fit map to existing markers (sans animation)
                 this.fit({'animate': false});

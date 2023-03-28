@@ -1,6 +1,6 @@
 <template>
     <div>
-        <mapbox-address-autofill>
+        <mapbox-address-autofill :access-token="accessToken">
             <input v-for="subfield in addressStore.subfields"
                 type="text"
                 :placeholder="subfield.label + (subfield.required ? ' *' : '')"
@@ -22,23 +22,16 @@ import { mapStores } from 'pinia';
 import { useAddressStore } from '../stores/AddressStore';
 
 export default {
+    data() {
+        return {
+            'accessToken': window.mapboxAccessToken,
+        }
+    },
     computed: {
         // Load Pinia store
         ...mapStores(useAddressStore),
     },
-    mounted() {
-        // Initialize the Autocomplete functionality
-        this.initAutocomplete();
-    },
     methods: {
-
-        /**
-         * Initialize the Autocomplete functionality.
-         */
-        initAutocomplete()
-        {
-            // TBD
-        },
 
         /**
          * Whether a subfield is both required and empty.

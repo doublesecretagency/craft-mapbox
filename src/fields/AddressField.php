@@ -146,6 +146,17 @@ class AddressField extends Field implements PreviewableFieldInterface
             ]);
         }
 
+        // Get coordinates
+        $lng  = ($data['lng']  ?: null);
+        $lat  = ($data['lat']  ?: null);
+        $zoom = ($data['zoom'] ?: null);
+
+        // If coords are valid but zoom is missing
+        if ($lng && $lat && !$zoom) {
+            // Fallback to zero by default
+            $zoom = 0;
+        }
+
         // Set record attributes
         $record->setAttributes([
             'formatted' => ($data['formatted'] ?: null),
@@ -156,9 +167,9 @@ class AddressField extends Field implements PreviewableFieldInterface
             'state'     => ($data['state'] ?: null),
             'zip'       => ($data['zip'] ?: null),
             'country'   => ($data['country'] ?: null),
-            'lng'       => ($data['lng'] ?: null),
-            'lat'       => ($data['lat'] ?: null),
-            'zoom'      => ($data['zoom'] ?: null),
+            'lng'       => $lng,
+            'lat'       => $lat,
+            'zoom'      => $zoom,
         ], false);
 
         // Save record
@@ -185,6 +196,11 @@ class AddressField extends Field implements PreviewableFieldInterface
             $lng  = ($value['lng']  ?? null);
             $lat  = ($value['lat']  ?? null);
             $zoom = ($value['zoom'] ?? null);
+            // If coords are valid but zoom is missing
+            if ($lng && $lat && !$zoom) {
+                // Fallback to zero by default
+                $zoom = 0;
+            }
             // Return Address model
             return new AddressModel([
                 'elementId' => (int) ($element->id ?? null),
@@ -199,7 +215,7 @@ class AddressField extends Field implements PreviewableFieldInterface
                 'country'   => ($value['country'] ?? null),
                 'lng'       => (is_numeric($lng) ? (float) $lng : null),
                 'lat'       => (is_numeric($lat) ? (float) $lat : null),
-                'zoom'      => (is_numeric($zoom) ? (int) $zoom : null),
+                'zoom'      => (is_numeric($zoom) ? (float) $zoom : null),
             ]);
         }
 
@@ -224,8 +240,15 @@ class AddressField extends Field implements PreviewableFieldInterface
         $attr = $record->getAttributes(null, $omitColumns);
 
         // Convert coordinates to floats
-        $attr['lng'] = ($attr['lng'] ? (float) $attr['lng'] : null);
-        $attr['lat'] = ($attr['lat'] ? (float) $attr['lat'] : null);
+        $attr['lng']  = ($attr['lng']  ? (float) $attr['lng']  : null);
+        $attr['lat']  = ($attr['lat']  ? (float) $attr['lat']  : null);
+        $attr['zoom'] = ($attr['zoom'] ? (float) $attr['zoom'] : null);
+
+        // If coords are valid but zoom is missing
+        if ($attr['lng'] && $attr['lat'] && !$attr['zoom']) {
+            // Fallback to zero by default
+            $attr['zoom'] = 0;
+        }
 
         // Check if JSON is valid
         // Must use this function to validate (I know it's redundant)
@@ -315,6 +338,10 @@ class AddressField extends Field implements PreviewableFieldInterface
     {
         // Load view service
         $view = Craft::$app->getView();
+
+        // Pass access token through to JavaScript
+        $accessToken = Mapbox::getAccessToken();
+        $view->registerJs("window.mapboxAccessToken='{$accessToken}';", View::POS_HEAD);
 
         // Register assets
         $view->registerAssetBundle(AddressFieldSettingsAsset::class);
@@ -437,9 +464,6 @@ class AddressField extends Field implements PreviewableFieldInterface
         // Set whether to show the map on initial load
         $settings['showMap'] = ('open' === $settings['mapOnStart']);
 
-        // Set the control size of map UI elements
-        $settings['controlSize'] = MapboxPlugin::$plugin->getSettings()->fieldControlSize;
-
         // Normalize the subfield config
         $settings['subfieldConfig'] = $this->_normalizeSubfieldConfig($settings['subfieldConfig'] ?? []);
 
@@ -456,10 +480,14 @@ class AddressField extends Field implements PreviewableFieldInterface
      */
     private function _getAddressData(?AddressModel $address = null): array
     {
+        // Get and JSON encode raw value
+        $raw = ($address->raw ?? null);
+        $raw = ($raw ? Json::encode($raw) : null);
+
         return [
             'address'=> [
                 'formatted' => ($address->formatted ?? null),
-                'raw'       => ($address->raw ?? null),
+                'raw'       => $raw,
                 'street1'   => ($address->street1 ?? null),
                 'street2'   => ($address->street2 ?? null),
                 'city'      => ($address->city ?? null),

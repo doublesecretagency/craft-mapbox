@@ -18,7 +18,6 @@ window.initAddressFieldSettings = () => {
 
     // Initialize new Vue instance
     const app = createApp(AddressFieldSettings);
-    // const app = createApp(AddressFieldSettings, addressFieldSettingsConfig);
 
     // Initialize Pinia
     app.use(createPinia());

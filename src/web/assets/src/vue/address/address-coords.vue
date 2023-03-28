@@ -4,6 +4,7 @@
             :type="config.type"
             :placeholder="input.label"
             :readonly="config.readOnly"
+            :min="'zoom' === input.key ? 0 : null"
             v-model.number="addressStore.data.coords[input.key]"
             :name="`${addressStore.namespace.name}[${input.key}]`"
             :class="getInputClasses(input.key)"
@@ -33,6 +34,26 @@ export default {
             // Return configuration
             return addressStore.configCoords;
         },
+    },
+    mounted() {
+        // Get the Pinia store
+        const addressStore = useAddressStore();
+
+        // Whether the existing coordinates are valid
+        const validCoords = addressStore.validateCoords(addressStore.data.coords);
+
+        // If coordinates are not valid, bail
+        if (!validCoords) {
+            return;
+        }
+
+        // If zoom is already set, bail
+        if (addressStore.data.coords.zoom) {
+            return;
+        }
+
+        // Set zoom to zero by default
+        addressStore.data.coords.zoom = 0;
     },
     methods: {
 

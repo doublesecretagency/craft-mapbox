@@ -85,9 +85,9 @@ class Address extends Location
     public ?float $distance = null;
 
     /**
-     * @var int|null Zoom level of map.
+     * @var float|null Zoom level of map.
      */
-    public ?int $zoom = null;
+    public ?float $zoom = null;
 
     // ========================================================================= //
 

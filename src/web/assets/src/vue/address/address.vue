@@ -5,7 +5,7 @@
         <address-coords></address-coords>
         <address-meta></address-meta>
         <div style="clear:both"></div>
-<!--        <address-map></address-map>-->
+        <address-map></address-map>
     </div>
 </template>
 
@@ -18,7 +18,7 @@ import AddressToggle from './address-toggle.vue';
 import AddressSubfields from './address-subfields.vue';
 import AddressCoords from './address-coords.vue';
 import AddressMeta from './address-meta.vue';
-// import AddressMap from './address-map.vue';
+import AddressMap from './address-map.vue';
 
 export default {
     name: 'AddressField',
@@ -27,7 +27,7 @@ export default {
         'address-subfields': AddressSubfields,
         'address-coords': AddressCoords,
         'address-meta': AddressMeta,
-        // 'address-map': AddressMap
+        'address-map': AddressMap
     },
     props: {
         namespace: Object,
@@ -60,8 +60,8 @@ export default {
         const addressData = addressStore.data.address;
         const addressCoords = addressStore.data.coords;
 
-        // Activate autofill
-        const autofill = mapboxsearch.autofill({accessToken: window.mapboxAccessToken});
+        // Get existing autofill field set
+        const autofill = document.querySelector('mapbox-address-autofill');
 
         // When a result is selected
         autofill.addEventListener('retrieve', event => {
@@ -102,6 +102,13 @@ export default {
             addressData.formatted = (feature.properties.full_address ?? null);
             addressData.raw = JSON.stringify(feature);
 
+            // If not changing the map visibility, bail
+            if ('noChange' === addressStore.settings.mapOnSearch) {
+                return;
+            }
+
+            // Change map visibility based on settings
+            addressStore.settings.showMap = ('open' === addressStore.settings.mapOnSearch);
         });
     }
 }

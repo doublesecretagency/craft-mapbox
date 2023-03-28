@@ -17848,6 +17848,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return addressStore.configCoords;
     }
   }),
+  mounted: function mounted() {
+    // Get the Pinia store
+    var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+    // Whether the existing coordinates are valid
+    var validCoords = addressStore.validateCoords(addressStore.data.coords);
+
+    // If coordinates are not valid, bail
+    if (!validCoords) {
+      return;
+    }
+
+    // If zoom is already set, bail
+    if (addressStore.data.coords.zoom) {
+      return;
+    }
+
+    // Set zoom to zero by default
+    addressStore.data.coords.zoom = 0;
+  },
   methods: {
     /**
      * Configure the inputs for coordinates.
@@ -17905,6 +17925,310 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-map.vue?vue&type=script&lang=js":
+/*!********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-map.vue?vue&type=script&lang=js ***!
+  \********************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.mjs");
+/* harmony import */ var _stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/AddressStore */ "./web/assets/src/vue/stores/AddressStore.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+// Import Pinia
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    // Make map & marker universally available
+    return {
+      map: null,
+      marker: null
+    };
+  },
+  computed: _objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_1__.mapStores)(_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)),
+  watch: {
+    // When coordinates are changed, update the marker position
+    'addressStore.data.coords.lng': function addressStoreDataCoordsLng() {
+      this._updateMarkerPosition();
+    },
+    'addressStore.data.coords.lat': function addressStoreDataCoordsLat() {
+      this._updateMarkerPosition();
+    },
+    // When zoom level is changed, update the map zoom
+    'addressStore.data.coords.zoom': function addressStoreDataCoordsZoom() {
+      this._updateZoomLevel();
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      var center;
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              // Attempt to get map center from field
+              center = _this._getFieldCenter(); // Initialize map using coordinates from field data or settings
+              if (!center) {
+                _context.next = 4;
+                break;
+              }
+              _this.initMap(center);
+              return _context.abrupt("return");
+            case 4:
+              _context.next = 6;
+              return new Promise(function (resolve, reject) {
+                // Output console notification
+                console.log('Attempting geolocation...');
+                // Attempt geolocation
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                  timeout: 5000
+                });
+              }).then(
+              // SUCCESS
+              function (result) {
+                // Output console notification
+                console.log('Success!');
+                // If coordinates are invalid, bail
+                if (!result.coords) {
+                  return;
+                }
+                // Initialize map based on user's current location
+                _this.initMap({
+                  lng: result.coords.longitude,
+                  lat: result.coords.latitude,
+                  zoom: 10
+                });
+              },
+              // FAILED
+              function (error) {
+                // Output error message in console
+                console.warn('[MB] Unable to perform HTML5 geolocation.', error);
+                // Use the generic fallback coordinates (Bermuda Triangle)
+                // https://plugins.doublesecretagency.com/mapbox/guides/bermuda-triangle/
+                _this.initMap({
+                  lng: -64.7527469,
+                  lat: 32.3113966,
+                  zoom: 6
+                });
+              });
+            case 6:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
+  },
+  methods: {
+    /**
+     * Initialize the map.
+     */
+    initMap: function initMap(startingPosition) {
+      var _this2 = this;
+      // Get the Pinia store
+      var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+      // After a tiny delay
+      setTimeout(function () {
+        try {
+          var mapboxgl = window.mapboxgl;
+
+          // If mapboxgl object doesn't exist yet, log message and bail
+          if (!mapboxgl) {
+            console.error('[GM] The `mapboxgl` object has not yet been loaded.');
+            return;
+          }
+
+          // Determine map center
+          var mapCenter = {
+            lng: parseFloat(startingPosition.lng),
+            lat: parseFloat(startingPosition.lat)
+          };
+
+          // Set map options
+          var mapOptions = {
+            'accessToken': window.mapboxAccessToken,
+            'container': _this2.$el,
+            'center': mapCenter,
+            'zoom': parseFloat(startingPosition.zoom) || 0,
+            'minZoom': 0,
+            'style': 'mapbox://styles/mapbox/satellite-streets-v11',
+            'attributionControl': false
+          };
+
+          // Set marker options
+          var markerOptions = {
+            'draggable': true
+          };
+
+          // Create the map
+          _this2.map = new mapboxgl.Map(mapOptions).addControl(new mapboxgl.NavigationControl({
+            'showCompass': false
+          })).addControl(new mapboxgl.GeolocateControl({
+            'positionOptions': {
+              'enableHighAccuracy': true
+            },
+            'trackUserLocation': true,
+            'showUserHeading': true
+          }));
+
+          // Create a draggable marker
+          _this2.marker = new mapboxgl.Marker(markerOptions).setLngLat(mapCenter).addTo(_this2.map);
+
+          // Store map & marker with Pinia
+          addressStore.map = _this2.map;
+          addressStore.marker = _this2.marker;
+
+          // Whenever map is zoomed, update zoom value
+          _this2.map.on('zoomend', function () {
+            addressStore.data.coords['zoom'] = _this2._getMapZoom();
+          });
+
+          // Whenever marker is dropped, re-center the map
+          _this2.marker.on('dragend', function () {
+            // Get marker coordinates
+            var coords = _this2.marker.getLngLat();
+            // Update coordinates in Pinia store
+            addressStore.data.coords = {
+              'lng': parseFloat(coords.lng.toFixed(7)),
+              'lat': parseFloat(coords.lat.toFixed(7)),
+              'zoom': _this2._getMapZoom()
+            };
+            // Center the map
+            _this2._centerMap();
+          });
+        } catch (error) {
+          // Unable to initialize the map
+          console.error(error);
+        }
+      }, 40);
+    },
+    // ========================================================================= //
+    /**
+     * Center map based on current marker position.
+     */
+    _centerMap: function _centerMap() {
+      var _this3 = this;
+      // Get the Pinia store
+      var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+      // Check whether field has valid coordinates
+      var validCoords = addressStore.validateCoords(addressStore.data.coords);
+
+      // If field does not have valid coordinates, bail
+      if (!validCoords) {
+        return;
+      }
+
+      // After a tiny delay
+      setTimeout(function () {
+        // Get coordinates
+        var coords = JSON.parse(JSON.stringify(addressStore.data.coords));
+
+        // Center map on marker coordinates
+        _this3.map.panTo(coords);
+
+        // Resize (redraw) the map
+        _this3.map.resize();
+      }, 10);
+    },
+    // ========================================================================= //
+    /**
+     * Attempt to get map center coordinates based on the field data or settings.
+     */
+    _getFieldCenter: function _getFieldCenter() {
+      // Get the Pinia store
+      var a = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+      // If valid, get coords from the existing field data
+      if (a.validateCoords(a.data.coords)) {
+        return a.data.coords;
+      }
+
+      // If valid, get default coords from the field settings
+      if (a.validateCoords(a.settings.coordinatesDefault)) {
+        return a.settings.coordinatesDefault;
+      }
+
+      // Unable to get any coordinates from the field
+      return false;
+    },
+    /**
+     * Get the current zoom level of the map.
+     */
+    _getMapZoom: function _getMapZoom() {
+      // Get the current zoom, or fallback to 11
+      var zoom = this.map.getZoom() || 0;
+
+      // Return as a float
+      return parseFloat(zoom.toFixed(2));
+    },
+    // ========================================================================= //
+    /**
+     * Update the marker position.
+     */
+    _updateMarkerPosition: function _updateMarkerPosition() {
+      // Get the Pinia store
+      var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+      // Check whether field has valid coordinates
+      var validCoords = addressStore.validateCoords(addressStore.data.coords);
+
+      // If field does not have valid coordinates, bail
+      if (!validCoords) {
+        return;
+      }
+
+      // Get coordinates
+      var coords = addressStore.data.coords;
+
+      // Update marker position
+      this.marker.setLngLat(coords);
+
+      // Center map
+      this._centerMap();
+
+      // Update zoom based on map level
+      addressStore.data.coords['zoom'] = this.map.getZoom();
+    },
+    /**
+     * Update the zoom level.
+     */
+    _updateZoomLevel: function _updateZoomLevel() {
+      // Get the Pinia store
+      var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+      // Get zoom level from field data
+      var zoom = parseFloat(addressStore.data.coords['zoom']);
+
+      // Corrections for incorrect zoom value
+      if (0 === zoom || zoom < 0) {
+        // Fallback when zoom is too low
+        zoom = 0;
+      } else if (!zoom || isNaN(zoom)) {
+        // Fallback when zoom is invalid
+        zoom = 11;
+      }
+
+      // Set map zoom level
+      this.map.setZoom(zoom);
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-meta.vue?vue&type=script&lang=js":
 /*!*********************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-meta.vue?vue&type=script&lang=js ***!
@@ -17948,18 +18272,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  computed: _objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_1__.mapStores)(_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)),
-  mounted: function mounted() {
-    // Initialize the Autocomplete functionality
-    this.initAutocomplete();
+  data: function data() {
+    return {
+      'accessToken': window.mapboxAccessToken
+    };
   },
+  computed: _objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_1__.mapStores)(_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)),
   methods: {
-    /**
-     * Initialize the Autocomplete functionality.
-     */
-    initAutocomplete: function initAutocomplete() {
-      // TBD
-    },
     /**
      * Whether a subfield is both required and empty.
      */
@@ -18104,12 +18423,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.mjs");
+/* harmony import */ var pinia__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! pinia */ "./node_modules/pinia/dist/pinia.mjs");
 /* harmony import */ var _stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stores/AddressStore */ "./web/assets/src/vue/stores/AddressStore.js");
 /* harmony import */ var _address_toggle_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./address-toggle.vue */ "./web/assets/src/vue/address/address-toggle.vue");
 /* harmony import */ var _address_subfields_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./address-subfields.vue */ "./web/assets/src/vue/address/address-subfields.vue");
 /* harmony import */ var _address_coords_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./address-coords.vue */ "./web/assets/src/vue/address/address-coords.vue");
 /* harmony import */ var _address_meta_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./address-meta.vue */ "./web/assets/src/vue/address/address-meta.vue");
+/* harmony import */ var _address_map_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./address-map.vue */ "./web/assets/src/vue/address/address-map.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -18120,7 +18440,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-// import AddressMap from './address-map.vue';
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'AddressField',
@@ -18128,17 +18447,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     'address-toggle': _address_toggle_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     'address-subfields': _address_subfields_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     'address-coords': _address_coords_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
-    'address-meta': _address_meta_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
-    // 'address-map': AddressMap
+    'address-meta': _address_meta_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+    'address-map': _address_map_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
-
   props: {
     namespace: Object,
     settings: Object,
     data: Object,
     images: Object
   },
-  computed: _objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_5__.mapStores)(_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)),
+  computed: _objectSpread({}, (0,pinia__WEBPACK_IMPORTED_MODULE_6__.mapStores)(_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)),
   setup: function setup(props) {
     // Get the Pinia store
     var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
@@ -18160,10 +18478,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var addressData = addressStore.data.address;
     var addressCoords = addressStore.data.coords;
 
-    // Activate autofill
-    var autofill = mapboxsearch.autofill({
-      accessToken: window.mapboxAccessToken
-    });
+    // Get existing autofill field set
+    var autofill = document.querySelector('mapbox-address-autofill');
 
     // When a result is selected
     autofill.addEventListener('retrieve', function (event) {
@@ -18203,6 +18519,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       // Update address meta data
       addressData.formatted = (_feature$properties$f = feature.properties.full_address) !== null && _feature$properties$f !== void 0 ? _feature$properties$f : null;
       addressData.raw = JSON.stringify(feature);
+
+      // If not changing the map visibility, bail
+      if ('noChange' === addressStore.settings.mapOnSearch) {
+        return;
+      }
+
+      // Change map visibility based on settings
+      addressStore.settings.showMap = 'open' === addressStore.settings.mapOnSearch;
     });
   }
 });
@@ -18224,13 +18548,14 @@ __webpack_require__.r(__webpack_exports__);
 var _withScopeId = function _withScopeId(n) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.pushScopeId)("data-v-457209b9"), n = n(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.popScopeId)(), n;
 };
-var _hoisted_1 = ["type", "placeholder", "readonly", "onUpdate:modelValue", "name"];
+var _hoisted_1 = ["type", "placeholder", "readonly", "min", "onUpdate:modelValue", "name"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getInputs(), function (input) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("input", {
       type: $options.config.type,
       placeholder: input.label,
       readonly: $options.config.readOnly,
+      min: 'zoom' === input.key ? 0 : null,
       "onUpdate:modelValue": function onUpdateModelValue($event) {
         return _ctx.addressStore.data.coords[input.key] = $event;
       },
@@ -18242,6 +18567,27 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       number: true
     }]]);
   }), 256 /* UNKEYED_FRAGMENT */))]);
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-map.vue?vue&type=template&id=54adced1":
+/*!************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-map.vue?vue&type=template&id=54adced1 ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+var _hoisted_1 = {
+  "class": "mb-map"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, null, 512 /* NEED_PATCH */)), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, _ctx.addressStore.settings.showMap]]);
 }
 
 /***/ }),
@@ -18290,9 +18636,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
-var _hoisted_1 = ["placeholder", "onUpdate:modelValue", "name", "autocomplete"];
+var _hoisted_1 = ["access-token"];
+var _hoisted_2 = ["placeholder", "onUpdate:modelValue", "name", "autocomplete"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("mapbox-address-autofill", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.addressStore.subfields, function (subfield) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("mapbox-address-autofill", {
+    "access-token": $data.accessToken
+  }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.addressStore.subfields, function (subfield) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("input", {
       type: "text",
       placeholder: subfield.label + (subfield.required ? ' *' : ''),
@@ -18307,8 +18656,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }]),
       style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)(subfield.styles),
       autocomplete: $options.autocomplete(subfield.handle)
-    }, null, 14 /* CLASS, STYLE, PROPS */, _hoisted_1)), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.addressStore.data.address[subfield.handle]]]);
-  }), 256 /* UNKEYED_FRAGMENT */))])]);
+    }, null, 14 /* CLASS, STYLE, PROPS */, _hoisted_2)), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.addressStore.data.address[subfield.handle]]]);
+  }), 256 /* UNKEYED_FRAGMENT */))], 8 /* PROPS */, _hoisted_1)]);
 }
 
 /***/ }),
@@ -18382,7 +18731,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_address_subfields = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("address-subfields");
   var _component_address_coords = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("address-coords");
   var _component_address_meta = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("address-meta");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_toggle), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_subfields), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_coords), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_meta), _hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("        <address-map></address-map>")]);
+  var _component_address_map = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("address-map");
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_toggle), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_subfields), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_coords), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_meta), _hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_address_map)]);
 }
 
 /***/ }),
@@ -18554,7 +18904,39 @@ var useAddressStore = (0,pinia__WEBPACK_IMPORTED_MODULE_1__.defineStore)('addres
    * Toggle visibility of the map.
    */
   function changeVisibility() {
+    var _this = this;
+    // Invert map visibility
     settings.value.showMap = !settings.value.showMap;
+
+    // If the map is not visible
+    if (!settings.value.showMap) {
+      // Nothing more to do
+      return;
+    }
+
+    // After a tiny delay
+    setTimeout(function () {
+      // Resize (redraw) the map
+      _this.map.resize();
+
+      // If missing marker, bail
+      if (!_this.marker) {
+        return;
+      }
+
+      // Get marker coordinates
+      var coords = _this.marker.getLngLat();
+
+      // If missing coordinates, bail
+      if (!coords['lng'] || !coords['lat']) {
+        return;
+      }
+
+      // Center map on marker coordinates
+      _this.map.panTo(coords, {
+        'animate': false
+      });
+    }, 10);
   }
 
   /**
@@ -18588,113 +18970,6 @@ var useAddressStore = (0,pinia__WEBPACK_IMPORTED_MODULE_1__.defineStore)('addres
   }
 
   /**
-   * Populate address data when Autocomplete selected.
-   */
-  function updateData(place) {
-    // Set address subfield data
-    _setAddressData(place.address_components);
-
-    // Get address data
-    var address = data.value.address;
-
-    // Whether the `name` value matches the `street1` value
-    var boringName = place.name === address.street1;
-
-    // Append additional data
-    address.name = !boringName ? place.name : null;
-    address.formatted = place.formatted_address;
-    address.raw = JSON.stringify(place);
-
-    // Set coordinates
-    var coords = place.geometry.location;
-    data.value.coords.lat = parseFloat(coords.lat().toFixed(7));
-    data.value.coords.lng = parseFloat(coords.lng().toFixed(7));
-
-    // If coords are invalid, clear meta subfields
-    if (!data.value.coords.lat || !data.value.coords.lng) {
-      address.formatted = null;
-      address.raw = null;
-    }
-
-    // If not changing the map visibility, bail
-    if ('noChange' === settings.value.mapOnSearch) {
-      return;
-    }
-
-    // Change map visibility based on settings
-    settings.value.showMap = 'open' === settings.value.mapOnSearch;
-  }
-
-  /**
-   * Set the individual subfield values.
-   */
-  function _setAddressData(components) {
-    // Initialize address data
-    var apiData = {};
-
-    // Loop through components from API results
-    components.forEach(function (c) {
-      // Get component type
-      var type = c['types'][0];
-      // Set value from component
-      switch (type) {
-        case 'locality':
-        case 'country':
-          apiData[type] = c['long_name'];
-          break;
-        default:
-          apiData[type] = c['short_name'];
-          break;
-      }
-    });
-
-    // Get address data
-    var address = data.value.address;
-
-    // Set address data to Vue
-    address.street1 = _formatStreet(apiData);
-    address.street2 = null;
-    address.city = apiData['locality'];
-    address.state = apiData['administrative_area_level_1'];
-    address.zip = apiData['postal_code'];
-    address.country = apiData['country'];
-
-    // Country-specific adjustments
-    switch (apiData['country']) {
-      case 'United Kingdom':
-        address.city = apiData['postal_town'];
-        address.state = apiData['administrative_area_level_2'];
-        break;
-    }
-  }
-
-  /**
-   * Format the main street address.
-   */
-  function _formatStreet(apiData) {
-    // Abbreviate variables
-    var streetNumber = apiData.street_number || '';
-    var streetName = apiData.route || '';
-    var country = apiData.country || '';
-
-    // Default street format
-    var street = "".concat(streetName, " ").concat(streetNumber);
-
-    // If needed, put street number before the street name
-    if (formatting.value.numberFirst.includes(country)) {
-      street = "".concat(streetNumber, " ").concat(streetName);
-    }
-
-    // If needed, put comma after the street name
-    if (formatting.value.commaAfterStreet.includes(country)) {
-      street = "".concat(streetName, ", ").concat(streetNumber);
-    }
-
-    // Return formatted street address
-    return street.trim().replace(/,*$/, '');
-  }
-
-  /**
    * Normalize the address data when anything changes.
    */
   function _normalizeData() {
@@ -18722,8 +18997,7 @@ var useAddressStore = (0,pinia__WEBPACK_IMPORTED_MODULE_1__.defineStore)('addres
     subfields: subfields,
     // Actions
     changeVisibility: changeVisibility,
-    validateCoords: validateCoords,
-    updateData: updateData
+    validateCoords: validateCoords
   };
 });
 
@@ -19249,6 +19523,33 @@ if (false) {}
 
 /***/ }),
 
+/***/ "./web/assets/src/vue/address/address-map.vue":
+/*!****************************************************!*\
+  !*** ./web/assets/src/vue/address/address-map.vue ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _address_map_vue_vue_type_template_id_54adced1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./address-map.vue?vue&type=template&id=54adced1 */ "./web/assets/src/vue/address/address-map.vue?vue&type=template&id=54adced1");
+/* harmony import */ var _address_map_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./address-map.vue?vue&type=script&lang=js */ "./web/assets/src/vue/address/address-map.vue?vue&type=script&lang=js");
+/* harmony import */ var _Users_lindseydiloreto_Sites_plugins_packages_craft_mapbox_src_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,_Users_lindseydiloreto_Sites_plugins_packages_craft_mapbox_src_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_address_map_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_address_map_vue_vue_type_template_id_54adced1__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"web/assets/src/vue/address/address-map.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
 /***/ "./web/assets/src/vue/address/address-meta.vue":
 /*!*****************************************************!*\
   !*** ./web/assets/src/vue/address/address-meta.vue ***!
@@ -19375,6 +19676,21 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./web/assets/src/vue/address/address-map.vue?vue&type=script&lang=js":
+/*!****************************************************************************!*\
+  !*** ./web/assets/src/vue/address/address-map.vue?vue&type=script&lang=js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_address_map_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_address_map_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./address-map.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-map.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./web/assets/src/vue/address/address-meta.vue?vue&type=script&lang=js":
 /*!*****************************************************************************!*\
   !*** ./web/assets/src/vue/address/address-meta.vue?vue&type=script&lang=js ***!
@@ -19446,6 +19762,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_address_coords_vue_vue_type_template_id_457209b9_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_address_coords_vue_vue_type_template_id_457209b9_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./address-coords.vue?vue&type=template&id=457209b9&scoped=true */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-coords.vue?vue&type=template&id=457209b9&scoped=true");
+
+
+/***/ }),
+
+/***/ "./web/assets/src/vue/address/address-map.vue?vue&type=template&id=54adced1":
+/*!**********************************************************************************!*\
+  !*** ./web/assets/src/vue/address/address-map.vue?vue&type=template&id=54adced1 ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_address_map_vue_vue_type_template_id_54adced1__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_address_map_vue_vue_type_template_id_54adced1__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./address-map.vue?vue&type=template&id=54adced1 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./web/assets/src/vue/address/address-map.vue?vue&type=template&id=54adced1");
 
 
 /***/ }),

@@ -14,7 +14,6 @@ namespace doublesecretagency\mapbox\web\assets;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 use craft\web\assets\vue\VueAsset;
-use doublesecretagency\mapbox\MapboxPlugin;
 use doublesecretagency\mapbox\helpers\Mapbox;
 
 /**
@@ -38,38 +37,15 @@ class AddressFieldAsset extends AssetBundle
         ];
 
         $this->css = [
+            'https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css',
             'css/address.css',
         ];
 
         $this->js = [
-            $this->_getApiUrl(),
+            Mapbox::getApiUrl('maps'),
+            Mapbox::getApiUrl('search'),
             'js/address.js',
         ];
-    }
-
-    /**
-     * Generate a fully compiled URL for the Mapbox API.
-     *
-     * @return string
-     */
-    private function _getApiUrl(): string
-    {
-        // Required API URL configuration options
-        $params = [
-//            'libraries' => 'places',
-//            'callback' => 'initAddressField',
-        ];
-
-        // Get optional field parameters
-        $fieldParams = MapboxPlugin::$plugin->getSettings()->fieldParams;
-
-        // If field parameters are specified, append them
-        if ($fieldParams && is_array($fieldParams)) {
-            $params = array_merge($params, $fieldParams);
-        }
-
-        // Return the fully compiled API URL
-        return Mapbox::getApiUrl('search', $params);
     }
 
 }

@@ -123,7 +123,38 @@ export const useAddressStore = defineStore('address', () => {
      */
     function changeVisibility()
     {
+        // Invert map visibility
         settings.value.showMap = !settings.value.showMap;
+
+        // If the map is not visible
+        if (!settings.value.showMap) {
+            // Nothing more to do
+            return;
+        }
+
+        // After a tiny delay
+        setTimeout(() => {
+
+            // Resize (redraw) the map
+            this.map.resize();
+
+            // If missing marker, bail
+            if (!this.marker) {
+                return;
+            }
+
+            // Get marker coordinates
+            const coords = this.marker.getLngLat();
+
+            // If missing coordinates, bail
+            if (!coords['lng'] || !coords['lat']) {
+                return;
+            }
+
+            // Center map on marker coordinates
+            this.map.panTo(coords, {'animate': false});
+
+        }, 10);
     }
 
     /**
@@ -158,116 +189,6 @@ export const useAddressStore = defineStore('address', () => {
     }
 
     /**
-     * Populate address data when Autocomplete selected.
-     */
-    function updateData(place)
-    {
-        // Set address subfield data
-        _setAddressData(place.address_components);
-
-        // Get address data
-        const address = data.value.address;
-
-        // Whether the `name` value matches the `street1` value
-        let boringName = (place.name === address.street1);
-
-        // Append additional data
-        address.name      = (!boringName ? place.name : null);
-        address.formatted = place.formatted_address;
-        address.raw       = JSON.stringify(place);
-
-        // Set coordinates
-        let coords = place.geometry.location;
-        data.value.coords.lat = parseFloat(coords.lat().toFixed(7));
-        data.value.coords.lng = parseFloat(coords.lng().toFixed(7));
-
-        // If coords are invalid, clear meta subfields
-        if (!data.value.coords.lat || !data.value.coords.lng) {
-            address.formatted = null;
-            address.raw       = null;
-        }
-
-        // If not changing the map visibility, bail
-        if ('noChange' === settings.value.mapOnSearch) {
-            return;
-        }
-
-        // Change map visibility based on settings
-        settings.value.showMap = ('open' === settings.value.mapOnSearch);
-    }
-
-    /**
-     * Set the individual subfield values.
-     */
-    function _setAddressData(components)
-    {
-        // Initialize address data
-        let apiData = {};
-
-        // Loop through components from API results
-        components.forEach(c => {
-            // Get component type
-            let type = c['types'][0];
-            // Set value from component
-            switch (type) {
-                case 'locality':
-                case 'country':
-                    apiData[type] = c['long_name'];
-                    break;
-                default:
-                    apiData[type] = c['short_name'];
-                    break;
-            }
-        });
-
-        // Get address data
-        const address = data.value.address;
-
-        // Set address data to Vue
-        address.street1 = _formatStreet(apiData);
-        address.street2 = null;
-        address.city    = apiData['locality'];
-        address.state   = apiData['administrative_area_level_1'];
-        address.zip     = apiData['postal_code'];
-        address.country = apiData['country'];
-
-        // Country-specific adjustments
-        switch (apiData['country']) {
-            case 'United Kingdom':
-                address.city  = apiData['postal_town'];
-                address.state = apiData['administrative_area_level_2'];
-                break;
-        }
-    }
-
-    /**
-     * Format the main street address.
-     */
-    function _formatStreet(apiData)
-    {
-        // Abbreviate variables
-        let streetNumber = apiData.street_number || '';
-        let streetName   = apiData.route         || '';
-        let country      = apiData.country       || '';
-
-        // Default street format
-        let street = `${streetName} ${streetNumber}`;
-
-        // If needed, put street number before the street name
-        if (formatting.value.numberFirst.includes(country)) {
-            street = `${streetNumber} ${streetName}`;
-        }
-
-        // If needed, put comma after the street name
-        if (formatting.value.commaAfterStreet.includes(country)) {
-            street = `${streetName}, ${streetNumber}`;
-        }
-
-        // Return formatted street address
-        return street.trim().replace(/,*$/,'');
-    }
-
-    /**
      * Normalize the address data when anything changes.
      */
     function _normalizeData()
@@ -299,7 +220,6 @@ export const useAddressStore = defineStore('address', () => {
         // Actions
         changeVisibility,
         validateCoords,
-        updateData,
     }
 
 })
