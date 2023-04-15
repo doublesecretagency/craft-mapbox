@@ -24,7 +24,6 @@ use doublesecretagency\mapbox\fields\AddressField;
 use doublesecretagency\mapbox\MapboxPlugin;
 use doublesecretagency\mapbox\helpers\Mapbox;
 use doublesecretagency\mapbox\helpers\MapHelper;
-use Throwable;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -380,7 +379,7 @@ class DynamicMap extends Model
         }
 
         // Compile map container
-        $html = Html::modifyTagAttributes('<div></div>', [
+        $html = Html::modifyTagAttributes('<div>Loading map...</div>', [
             'id' => $this->id,
             'class' => 'mb-map',
             'data-dna' => Json::encode($this->_dna),
@@ -498,34 +497,6 @@ class DynamicMap extends Model
             'locations' => $coords,
             'options' => $options,
         ];
-    }
-
-    // ========================================================================= //
-
-    /**
-     * Parse a dynamic marker string.
-     *
-     * @param array|Element|Location $location
-     * @param string $string
-     * @throws Exception
-     * @throws LoaderError
-     * @throws SyntaxError
-     * @throws Throwable
-     */
-    private function _parseLocationString(array|Element|Location $location, string &$string): void
-    {
-        // Get view services
-        $view = Craft::$app->getView();
-
-        // If location is an object, parse string with object data
-        if (is_object($location)) {
-            $string = $view->renderObjectTemplate($string, $location);
-        }
-
-        // If location is an array, parse string with array data
-        if (is_array($location)) {
-            $string = $view->renderString($string, $location);
-        }
     }
 
     // ========================================================================= //

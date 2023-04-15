@@ -18934,7 +18934,7 @@ var _hoisted_5 = {
     "margin-top": "10px"
   }
 };
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"heading settings-note\" data-v-b4b455d2><label data-v-b4b455d2>Set the Default Map Starting Position</label><div class=\"instructions\" data-v-b4b455d2><p data-v-b4b455d2>You can to set the <strong data-v-b4b455d2>default coordinates &amp; zoom level</strong> using the &quot;Preview&quot; field above. Whatever position you save this map to will become the default map orientation for all new instances of this field.</p><p data-v-b4b455d2>Only the <strong data-v-b4b455d2>latitude</strong>, <strong data-v-b4b455d2>longitude</strong>, and <strong data-v-b4b455d2>zoom</strong> will be used to orient the map when a new element is being created. No other data from the &quot;Preview&quot; field will prepopulate future instances of this field.</p></div></div>", 1);
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"heading settings-note\" data-v-b4b455d2><label data-v-b4b455d2>Set the Default Map Starting Position</label><div class=\"instructions\" data-v-b4b455d2><p data-v-b4b455d2>You can to set the <strong data-v-b4b455d2>default coordinates &amp; zoom level</strong> using the &quot;Preview&quot; field above. Whatever position you save this map to will become the default map orientation for all new instances of this field.</p><p data-v-b4b455d2>Only the <strong data-v-b4b455d2>longitude</strong>, <strong data-v-b4b455d2>latitude</strong>, and <strong data-v-b4b455d2>zoom</strong> will be used to orient the map when a new element is being created. No other data from the &quot;Preview&quot; field will prepopulate future instances of this field.</p></div></div>", 1);
 var _hoisted_7 = {
   "class": "heading settings-note warning",
   style: {
@@ -19584,7 +19584,10 @@ var _hoisted_1 = ["access-token"];
 var _hoisted_2 = ["placeholder", "onUpdate:modelValue", "name", "autocomplete"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("mapbox-address-autofill", {
-    "access-token": $data.accessToken
+    "access-token": $data.accessToken,
+    options: {
+      'limit': 6
+    }
   }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.addressStore.subfields, function (subfield) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("input", {
       type: "text",

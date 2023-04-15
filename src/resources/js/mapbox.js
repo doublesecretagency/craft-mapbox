@@ -57,6 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize specified maps
         init: function(mapId, callback) {
 
+            // If bypassing map ID
+            if (null === mapId) {
+                // Undefine the map ID
+                mapId = void 0;
+            }
+
             // Get selected map containers
             const containers = this._whichMaps(mapId);
 
@@ -102,21 +108,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     continue;
                 }
 
+                // If unable to load Mapbox API, skip it
+                if (typeof mapboxgl === 'undefined') {
+                    console.warn(`[MB] Unable to load the Mapbox API`);
+                    console.error(`[MB] mapboxgl is not defined`);
+                    continue;
+                }
+
+                // Empty existing contents of the map container
+                map.innerHTML = '';
+
                 // Render each map
                 this._unpack(dna);
 
-            }
+                // If map callback was specified and is a function
+                if (callback && 'function' === typeof callback) {
 
-            // If map callback was specified and is a function
-            if (callback && 'function' === typeof callback) {
+                    // Log status
+                    if (this.log) {
+                        console.log(`[${map.id}] Running map callback function:\n`,callback);
+                    }
 
-                // Log status
-                if (this.log) {
-                    console.log(`[${map.id}] Running map callback function:\n`,callback);
+                    // Execute map callback
+                    callback();
+
                 }
-
-                // Execute map callback
-                callback();
 
             }
 

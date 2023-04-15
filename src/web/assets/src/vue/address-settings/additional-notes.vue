@@ -18,7 +18,7 @@
                     <label>Set the Default Map Starting Position</label>
                     <div class="instructions">
                         <p>You can to set the <strong>default coordinates &amp; zoom level</strong> using the "Preview" field above. Whatever position you save this map to will become the default map orientation for all new instances of this field.</p>
-                        <p>Only the <strong>latitude</strong>, <strong>longitude</strong>, and <strong>zoom</strong> will be used to orient the map when a new element is being created. No other data from the "Preview" field will prepopulate future instances of this field.</p>
+                        <p>Only the <strong>longitude</strong>, <strong>latitude</strong>, and <strong>zoom</strong> will be used to orient the map when a new element is being created. No other data from the "Preview" field will prepopulate future instances of this field.</p>
                     </div>
                 </div>
 

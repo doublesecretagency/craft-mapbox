@@ -23,7 +23,6 @@ use craft\services\Fields;
 use craft\services\Plugins;
 use doublesecretagency\mapbox\fields\AddressField;
 use doublesecretagency\mapbox\models\Settings;
-use doublesecretagency\mapbox\web\assets\SettingsAsset;
 use doublesecretagency\mapbox\web\twig\Extension;
 use yii\base\Event;
 
@@ -85,7 +84,6 @@ class MapboxPlugin extends Plugin
     {
         // Reference assets
         $view = Craft::$app->getView();
-        $view->registerAssetBundle(SettingsAsset::class);
 
         // Get data from config file
         $configFile = Craft::$app->getConfig()->getConfigFromFile('mapbox');

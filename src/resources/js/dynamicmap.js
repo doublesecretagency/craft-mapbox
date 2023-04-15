@@ -256,10 +256,10 @@ function DynamicMap(locations, options) {
 
         // If no padding specified, use fallback
         options.padding = options.padding || {
-            'top'    : 50,
-            'right'  : 30,
-            'bottom' : 30,
-            'left'   : 30,
+            'top'    : 70,
+            'right'  : 40,
+            'bottom' : 40,
+            'left'   : 40,
         };
 
         // Fit bounds of current map
@@ -842,7 +842,7 @@ function DynamicMap(locations, options) {
         }
 
         // Get current height of container div
-        var height = this.div.scrollHeight;
+        var height = this.div.clientHeight;
 
         // If height is a positive number, check is successful
         if (0 < height) {
@@ -863,14 +863,6 @@ function DynamicMap(locations, options) {
         // If default center is valid, return it
         if (this._validCoords(this._d.center)) {
             return this._d.center;
-        }
-
-        // Get current center
-        const currentCenter = this.getCenter(true);
-
-        // If current center is valid, return it
-        if (this._validCoords(currentCenter)) {
-            return currentCenter;
         }
 
         // If marker boundaries exist
@@ -896,28 +888,22 @@ function DynamicMap(locations, options) {
     // Calculate the correct zoom
     this._calculateZoom = function(totalMarkers) {
 
-        // Get current zoom (fallback to default)
-        let zoom = this.getZoom(true) || this._d.zoom;
-
-        // If zoom is already set, return it
-        if (zoom) {
-            return zoom;
+        // If zoom is specified and valid, return it
+        if (this._d.zoom && !isNaN(this._d.zoom)) {
+            return this._d.zoom;
         }
 
         // If fewer than two markers exist
-        if (totalMarkers < 2) {
+        if (!totalMarkers || totalMarkers < 2) {
             // Return a comfortable zoom level
             return this._comfortableZoom;
         }
 
-        // If default center is not valid
-        if (!this._validCoords(this._d.center)) {
-            // After a tiny delay
-            setTimeout(() => {
-                // Fit map to existing markers (sans animation)
-                this.fit({'animate': false});
-            }, 10);
-        }
+        // After a tiny delay
+        setTimeout(() => {
+            // Fit map to existing markers (sans animation)
+            this.fit({'animate': false});
+        }, 10);
 
         // Return a comfortable zoom level by default
         return this._comfortableZoom;
@@ -943,8 +929,23 @@ function DynamicMap(locations, options) {
 
     // Check whether coordinates are valid
     this._validCoords = function(coords) {
-        // Whether coords exists and are not [0,0]
-        return (coords && !!(coords.lng || coords.lat));
+
+        // If no coordinates, mark invalid
+        if (!coords) {
+            return false;
+        }
+
+        // If using short syntax (array with two numbers)
+        if (Array.isArray(coords) && coords.length === 2) {
+            // Convert to full syntax
+            coords = {
+                'lng': coords[0] || 0,
+                'lat': coords[1] || 0
+            }
+        }
+
+        // Whether coords are not [0,0]
+        return !!(coords.lng || coords.lat);
     };
 
     // ========================================================================= //

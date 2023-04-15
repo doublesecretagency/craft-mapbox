@@ -1,6 +1,6 @@
 <template>
     <div>
-        <mapbox-address-autofill :access-token="accessToken">
+        <mapbox-address-autofill :access-token="accessToken" :options="{'limit':6}">
             <input v-for="subfield in addressStore.subfields"
                 type="text"
                 :placeholder="subfield.label + (subfield.required ? ' *' : '')"
