@@ -759,11 +759,20 @@ function DynamicMap(locations, options) {
             console.log(`[${this.id}] Adding popup to marker "${markerId}"`);
         }
 
-        // Ensure popup options exist
-        options.popupOptions = options.popupOptions || {};
+        // Get marker content
+        const content = markerPopup.content;
+
+        // Remove marker content from options
+        delete markerPopup.content;
+
+        // If no popupOptions were specified
+        if (!options.popupOptions || !Object.keys(options.popupOptions).length) {
+            // Retrieve them from the markerPopup object
+            options.popupOptions = markerPopup || {};
+        }
 
         // Initialize popup object
-        this._popups[markerId] = new mapboxgl.Popup(options.popupOptions).setHTML(markerPopup.content);
+        this._popups[markerId] = new mapboxgl.Popup(options.popupOptions).setHTML(content);
 
         // Attach new popup to its respective marker
         this._markers[markerId].setPopup(this._popups[markerId]);
