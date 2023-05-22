@@ -6,54 +6,60 @@
 
 ---
 
-### Includes easy-to-use Address Fields
+### Create flexible [Dynamic Maps](https://plugins.doublesecretagency.com/mapbox/dynamic-maps/)
 
-When managing your Craft data, each location can be set with a convenient Address field.
+Add markers, use popups, change marker icons, style maps, and much, much more...
 
-### Create flexible Dynamic Maps
+<p align="center">
+    <img width="850" src="https://raw.githubusercontent.com/doublesecretagency/craft-mapbox/8e6170c2fcf2794c563bf3db43ed7f8c4e488aa5/docs/.vuepress/public/images/maps/example.png" alt="Screenshot of a dynamic map">
+</p>
 
-Add markers, use popups, style maps, change marker icons, and much more.
+### [Universal API](https://plugins.doublesecretagency.com/mapbox/dynamic-maps/universal-api/) works across JavaScript, Twig, and PHP
 
-The plugin features a powerful [universal API](https://plugins.doublesecretagency.com/mapbox/dynamic-maps/universal-api/) which works nearly identically across **JavaScript, Twig, and PHP!**
+The plugin features a powerful universal API which is nearly identical across multiple programming languages...
 
-```twig
-{# Get the entries #}
-{% set entries = craft.entries.section('locations').all() %}
-
-{# Place them on a dynamic map #}
-{{ mapbox.map(entries).tag() }}
+```js
+// JavaScript
+const map = mapbox.map()
+    .markers(locations, options)
+    .style(mapStyle)
+    .center(coords)
+    .zoom(level);
 ```
 
-For more information, see the [full dynamic maps docs...](https://plugins.doublesecretagency.com/mapbox/dynamic-maps/)
+```twig
+{# Twig #}
+{% set map = mapbox.map()
+    .markers(locations, options)
+    .style(mapStyle)
+    .center(coords)
+    .zoom(level) %}
+```
+
+```php
+// PHP
+$map = Mapbox::map()
+    ->markers($locations, $options)
+    ->style($mapStyle)
+    ->center($coords)
+    ->zoom($level);
+```
+
+### Includes an easy-to-use [Address Field](https://plugins.doublesecretagency.com/mapbox/address-field/)
+
+When managing your Craft data, each location can be set with a convenient Address field...
+
+<p align="center">
+    <img width="640" src="https://raw.githubusercontent.com/doublesecretagency/craft-mapbox/v1-dev/docs/.vuepress/public/images/address-field/annotated.png" alt="Annotated screenshot of an Address field">
+</p>
 
 ---
 
 ## How to Install the Plugin
 
-### Installation via Plugin Store
+To get started, see the [**complete installation instructions ➡️**](https://plugins.doublesecretagency.com/mapbox/getting-started/)
 
-See the complete instructions for [installing via the plugin store...](https://plugins.doublesecretagency.com/mapbox/getting-started/#installation-via-plugin-store)
-
-### Installation via Console Commands
-
-To install the **Mapbox** plugin via the console, follow these steps:
-
-```sh
-# Go to your Craft project
-cd /path/to/project
-
-# Tell Composer to load the plugin
-composer require doublesecretagency/craft-mapbox
-
-# Tell Craft to install the plugin
-./craft plugin/install mapbox
-```
-
->Alternatively, you can visit the **Settings > Plugins** page to finish the installation. If installed via the control panel, you will automatically be redirected to configure the plugin after installation is complete.
-
-### Access Token
-
-Once the plugin is installed, you will need to [add a Mapbox Access Token...](https://plugins.doublesecretagency.com/mapbox/getting-started/access-token/)
+Once the plugin is installed, a [Mapbox Access Token](https://plugins.doublesecretagency.com/mapbox/getting-started/access-token/) will also be required.
 
 ---
 
