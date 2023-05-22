@@ -2,7 +2,7 @@
     "name": "doublesecretagency/craft-mapbox",
     "description": "Maps in minutes. Powered by the Mapbox API.",
     "type": "craft-plugin",
-    "version": "1.0.0-beta",
+    "version": "1.0.0",
     "keywords": [
         "craft",
         "cms",
