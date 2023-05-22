@@ -1,5 +1,26 @@
 ---
 description: Create a dynamic map quickly, then chain additional commands to further customize it. The same chainable commands are available in JS, Twig, and PHP.
+meta:
+  - property: og:type
+    content: website
+  - property: og:url
+    content: https://plugins.doublesecretagency.com/mapbox/dynamic-maps/
+  - property: og:title
+    content: Dynamic Maps | Mapbox plugin for Craft CMS
+  - property: og:description
+    content: Create a dynamic map quickly, then chain additional commands to further customize it. The same chainable commands are available in JS, Twig, and PHP.
+  - property: og:image
+    content: https://plugins.doublesecretagency.com/mapbox/images/maps/example.png
+  - property: twitter:card
+    content: summary_large_image
+  - property: twitter:url
+    content: https://plugins.doublesecretagency.com/mapbox/dynamic-maps/
+  - property: twitter:title
+    content: Dynamic Maps | Mapbox plugin for Craft CMS
+  - property: twitter:description
+    content: Create a dynamic map quickly, then chain additional commands to further customize it. The same chainable commands are available in JS, Twig, and PHP.
+  - property: twitter:image
+    content: https://plugins.doublesecretagency.com/mapbox/images/maps/example.png
 ---
 
 # Dynamic Maps
@@ -8,6 +29,10 @@ We've designed this plugin to be a universally helpful tool, regardless of which
 
  - The [Universal API](/dynamic-maps/universal-api/) provides a harmonious way to manipulate your maps across languages.
  - [Chaining](/dynamic-maps/chaining/) allows you to quickly customize maps in the most flexible possible way. 
+
+<p align="center">
+    <img class="dropshadow" :src="$withBase('/images/maps/example.png')" alt="Example of a generated map, showing a popup and differently colored markers" width="850">
+</p>
 
 ## Creating a Map in Twig
 

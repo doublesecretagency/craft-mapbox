@@ -28,13 +28,17 @@ tagline: Maps in minutes. Powered by the Mapbox API.
 actionText: Get Started →
 actionLink: /getting-started/
 features:
-- title: Address Field
-  details: Provides a powerful and customizable Address field to store location data.
 - title: Dynamic Maps
   details: Get all the richness of the Mapbox API using simple, chainable methods.
+- title: Address Field
+  details: Provides a powerful and customizable Address field to store location data.
 - title: Universal API
   details: Use the same methods to build a map, whether it's in JavaScript, Twig, or PHP.
 ---
+
+<p align="center">
+    <a href="/mapbox/dynamic-maps"><img class="dropshadow" :src="$withBase('/images/maps/example.png')" alt="Example of a generated map, showing a popup and differently colored markers" width="850"></a>
+</p>
 
 ---
 ---
