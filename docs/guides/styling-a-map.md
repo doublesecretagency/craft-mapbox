@@ -10,7 +10,7 @@ meta:
 - property: og:description
   content: Make your maps blend seamlessly with any website, by easily adding your own custom style.
 - property: og:image
-  content: https://plugins.doublesecretagency.com/mapbox/images/meta/styling-a-map.png
+  content: https://plugins.doublesecretagency.com/mapbox/images/guides/styling-a-map.png
 - property: twitter:card
   content: summary_large_image
 - property: twitter:url
@@ -20,10 +20,12 @@ meta:
 - property: twitter:description
   content: Make your maps blend seamlessly with any website, by easily adding your own custom style.
 - property: twitter:image
-  content: https://plugins.doublesecretagency.com/mapbox/images/meta/styling-a-map.png
+  content: https://plugins.doublesecretagency.com/mapbox/images/guides/styling-a-map.png
 ---
 
 # Styling a Map
+
+<img class="dropshadow" :src="$withBase('/images/guides/styling-a-map.png')" alt="Example of a styled map" width="600">
 
 Mapbox makes it simple to specify which map style you would like to use, or even generate your own custom style. Your style can be applied when creating the map, or set later using the `style` method.
 

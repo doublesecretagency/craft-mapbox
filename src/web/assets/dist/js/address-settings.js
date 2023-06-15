@@ -18431,7 +18431,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             'center': mapCenter,
             'zoom': parseFloat(startingPosition.zoom) || 0,
             'minZoom': 0,
-            'style': 'mapbox://styles/mapbox/satellite-streets-v11',
+            'style': 'mapbox://styles/mapbox/streets-v12',
             'attributionControl': false
           };
 

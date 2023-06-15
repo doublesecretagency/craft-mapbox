@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Changed style of map in the Address field. ([#3](https://github.com/doublesecretagency/craft-mapbox/issues/3))
+
 ## 1.0.0 - 2023-05-22
 
 ### Added
