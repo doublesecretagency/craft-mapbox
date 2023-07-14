@@ -80,7 +80,7 @@ class ApiHelper
                 break;
             case 'search':
                 // Search API
-                $apiUrl .= 'search-js/v1.0.0-beta.14/web.js';
+                $apiUrl .= 'search-js/v1.0.0-beta.17/core.js';
                 break;
 //            case 'navigation':
 //                $baseUrl .= '';

@@ -1,18 +1,57 @@
 <template>
     <div>
-        <mapbox-address-autofill :access-token="accessToken" :options="{'limit':6}">
-            <input v-for="subfield in addressStore.subfields"
+
+        <div>
+            <input
                 type="text"
+                v-for="subfield in addressStore.subfields"
                 :placeholder="subfield.label + (subfield.required ? ' *' : '')"
-                :ref="subfield.handle"
                 v-model="addressStore.data.address[subfield.handle]"
                 :name="`${addressStore.namespace.name}[${subfield.handle}]`"
                 class="text fullwidth"
                 :class="{'required': isRequiredAndInvalid(subfield)}"
                 :style="subfield.styles"
-                :autocomplete="autocomplete(subfield.handle)"
+                autocomplete="off"
+                v-on="subfield.autocomplete ? {keydown, keyup, focus} : {}"
             />
-        </mapbox-address-autofill>
+        </div>
+
+        <div
+            ref="results"
+            class="search-results"
+            v-show="showResults"
+            :style="{
+                'width': resultsWidth,
+                'left': resultsLeft,
+            }"
+        >
+            <div class="search-results-list">
+                <div
+                    class="suggestion"
+                    :class="{'active': i === addressStore.activeSuggestion}"
+                    v-for="(suggestion, i) in addressStore.suggestions"
+                    @click="retrieve(suggestion)"
+                    :key="i"
+                    tabindex="-1"
+                >
+                    <div class="suggestion-icon">
+                        <img
+                            :src="makiSrc(suggestion.maki || 'default')"
+                            :alt="makiAlt(suggestion.maki || 'default')"
+                        >
+                    </div>
+                    <div class="suggestion-text">
+                        <div class="suggestion-name">{{ suggestion.name }}</div>
+                        <div class="suggestion-desc">{{ suggestion.place_formatted }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-results-attribution">
+                <a href="https://www.mapbox.com/search-service" target="_blank" tabindex="-1">Powered by Mapbox</a>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -21,17 +60,365 @@
 import { mapStores } from 'pinia';
 import { useAddressStore } from '../stores/AddressStore';
 
+// Import from Vue
+import { toRaw } from 'vue';
+
 export default {
     data() {
+        // Configure the search object
+        // https://docs.mapbox.com/mapbox-search-js/api/core/search/#searchboxoptions
+        const options = {
+            accessToken: window.mapboxAccessToken,
+            limit: 6,
+            // proximity: {'lng':-118,'lat':31},
+            // language: 'ja',
+            // country: 'JP',
+        };
+
+        // If libraries have not yet been defined
+        if (!window.mapboxsearchcore) {
+            // Log error and bail
+            console.warn('[MB] Unable to load the Mapbox search libraries.');
+        }
+
+        // Extract search libraries
+        const {
+            SearchBoxCore,
+            SearchSession
+        } = window.mapboxsearchcore;
+
+        // Configure search session
+        const search = new SearchBoxCore(options);
+        const session = new SearchSession(search, 200); // Debounce 2 of 2
+
+        // Return data
         return {
-            'accessToken': window.mapboxAccessToken,
+            'session': session,
+            'resultsLeft': '0',
+            'resultsWidth': '400px',
         }
     },
     computed: {
         // Load Pinia store
         ...mapStores(useAddressStore),
+        showResults() {
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+            // Return whether any results exist
+            return (addressStore.suggestions.length > 0);
+        }
+    },
+    mounted() {
+        this.listeners();
     },
     methods: {
+
+        /**
+         * Add listeners for search events.
+         */
+        listeners()
+        {
+            // Get original (raw) session object
+            const session = toRaw(this.session);
+
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+
+            // When a search is performed
+            session.addEventListener('suggest', (response) => {
+                // If no response, bail
+                if (!response) {
+                    return;
+                }
+                // Store the results
+                addressStore.suggestions = (response.suggestions || []);
+            });
+
+            // When a result is selected
+            session.addEventListener('retrieve', (response) => {
+                // If no response, bail
+                if (!response) {
+                    return;
+                }
+                // If no features, log message and bail
+                if (!response.features || !response.features.length) {
+                    console.warn('[MB] No location data available.');
+                    return;
+                }
+                // Load feature info
+                addressStore.updateData(response.features[0]);
+            });
+        },
+
+        // ========================================================================= //
+
+        /**
+         * Perform address lookup.
+         */
+        search(searchValue)
+        {
+            // Perform search
+            toRaw(this.session).suggest(searchValue);
+
+            // Reset list of search suggestions
+            this.resetSuggestions();
+        },
+
+        /**
+         * Retrieve a specific address.
+         */
+        retrieve(suggestion)
+        {
+            // Retrieve suggestion info
+            toRaw(this.session).retrieve(suggestion);
+
+            // Reset list of search suggestions
+            this.resetSuggestions();
+        },
+
+        // ========================================================================= //
+
+        /**
+         * Reset list of search suggestions.
+         */
+        resetSuggestions()
+        {
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+
+            // Reset suggestions
+            addressStore.suggestions = [];
+            addressStore.activeSuggestion = null;
+        },
+
+        // ========================================================================= //
+
+        /**
+         * When a subfield gains focus.
+         */
+        focus(e)
+        {
+            // Reset list of search suggestions
+            this.resetSuggestions();
+
+            // Get target subfield element
+            const subfield = e.target;
+
+            // Move results to be right after the subfield
+            subfield.parentNode.insertBefore(
+                this.$refs.results,  // Results list
+                subfield.nextSibling // Next subfield
+            );
+
+            // Adjust position of search results
+            this.resultsLeft  = `${subfield.offsetLeft}px`;
+            this.resultsWidth = `${subfield.offsetWidth}px`;
+        },
+
+        /**
+         * Handle a keydown event.
+         */
+        keydown(e)
+        {
+            // If the escape key was pressed
+            if (27 === e.keyCode) {
+                this.keyupEsc(e);
+            }
+
+            // If results are hidden, bail
+            if (!this.showResults) {
+                return;
+            }
+
+            // Prevent default behavior
+            // on specified key presses
+            const keys = [
+                13, // Enter/Return
+                38, // Left arrow
+                40, // Right arrow
+            ];
+
+            // If key isn't specified, bail
+            if (-1 === keys.indexOf(e.keyCode)) {
+                return;
+            }
+
+            // Prevent default behavior
+            e.preventDefault();
+        },
+
+        /**
+         * Handle a keyup event.
+         */
+        keyup(e)
+        {
+            // Which key was pressed?
+            switch (e.keyCode) {
+
+                // Do nothing
+                case 16: // Shift
+                case 27: // Escape
+                case 32: // Space
+                case 37: // Left arrow
+                case 39: // Right arrow
+                    break;
+
+                // Do something
+                case 13: // Enter/Return
+                    this.keyupEnter(e);
+                    break;
+                case 38: // Up arrow
+                    this.keyupArrowUp(e);
+                    break;
+                case 40: // Down arrow
+                    this.keyupArrowDown(e);
+                    break;
+                default: // Any other key
+                    this.keyupTyping(e);
+                    break;
+
+            }
+        },
+
+        /**
+         * When the Escape key is pressed.
+         */
+        keyupEsc(e)
+        {
+            // Reset list of search suggestions
+            this.resetSuggestions();
+
+            // After a tiny delay
+            setTimeout(() => {
+                // Refocus the input
+                e.target.focus();
+            }, 10);
+        },
+
+        /**
+         * When the "Enter" key is pressed.
+         */
+        keyupEnter(e)
+        {
+            // Prevent the default behavior
+            e.preventDefault();
+
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+
+            // Get index of the active suggestion
+            const i = addressStore.activeSuggestion;
+
+            // If no active suggestion, bail
+            if (null === i) {
+                return;
+            }
+
+            // Retrieve selected suggestion
+            this.retrieve(addressStore.suggestions[i]);
+        },
+
+        /**
+         * When the up arrow key is pressed.
+         */
+        keyupArrowUp(e)
+        {
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+
+            // If no active suggestion
+            if (null === addressStore.activeSuggestion) {
+                // Start with the last
+                addressStore.activeSuggestion = (addressStore.suggestions.length - 1);
+                return;
+            }
+
+            // Decrement the active suggestion
+            addressStore.activeSuggestion--;
+
+            // If less than zero
+            if (addressStore.activeSuggestion <= -1) {
+                // Reset active suggestion
+                addressStore.activeSuggestion = null;
+            }
+        },
+
+        /**
+         * When the down arrow key is pressed.
+         */
+        keyupArrowDown(e)
+        {
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+
+            // If no active suggestion
+            if (null === addressStore.activeSuggestion) {
+                // Start with the first
+                addressStore.activeSuggestion = 0;
+                return;
+            }
+
+            // Increment the active suggestion
+            addressStore.activeSuggestion++;
+
+            // If more than the total number of suggestions
+            if (addressStore.suggestions.length <= addressStore.activeSuggestion) {
+                // Reset active suggestion
+                addressStore.activeSuggestion = null;
+            }
+        },
+
+        /**
+         * When the user is generally typing.
+         */
+        keyupTyping(e)
+        {
+            // If the timer exists
+            if (this.timer) {
+                // Clear timer
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+
+            // Set a new timer
+            this.timer = setTimeout(() => {
+                // Perform search
+                this.search(e.target.value);
+            }, 350); // Debounce 1 of 2
+        },
+
+        // ========================================================================= //
+
+        /**
+         * Get src of the Maki icon.
+         */
+        makiSrc(icon)
+        {
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+
+            // Return the icon URL
+            return addressStore.images[`maki-${icon}`] || `#${icon}`;
+        },
+
+        /**
+         * Get alt of the Maki icon.
+         */
+        makiAlt(icon)
+        {
+            // Convert to title case
+            icon = icon.replace(
+                /\w\S*/g,
+                function (txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                }
+            );
+
+            // Prepend "Icon"
+            return `${icon} Icon`;
+        },
+
+        // ========================================================================= //
 
         /**
          * Whether a subfield is both required and empty.
@@ -55,23 +442,65 @@ export default {
             return true;
         },
 
-        /**
-         * Get the autocomplete attribute value for a given subfield handle.
-         */
-        autocomplete(handle)
-        {
-            switch (handle) {
-                case 'name':    return 'organization';
-                case 'street1': return 'address-line1';
-                case 'street2': return 'address-line2';
-                case 'city':    return 'address-level2';
-                case 'state':   return 'address-level1';
-                case 'zip':     return 'postal-code';
-                case 'country': return 'country-name';
-                default:        return 'chrome-off';
-            }
-        },
-
     }
 }
 </script>
+
+<style scoped>
+.search-results {
+    width: 670px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.05), 0 0 6px 1px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.75);
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.2em;
+    min-width: min(300px, 100vw);
+    overflow-y: auto;
+    position: absolute;
+    transform: translateZ(0px);
+    transition: visibility 150ms;
+    z-index: 1000;
+}
+
+.search-results-list {}
+.suggestion {
+    align-items: center;
+    display: flex;
+    padding: 0.5em 0.75em;
+    cursor: pointer;
+}
+.suggestion:hover {
+    background-color: #f0f0f0;
+}
+.suggestion.active,
+.suggestion:active {
+    background-color: #f0f0f0;
+}
+
+.suggestion-icon {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+.suggestion-icon img {
+    color: rgba(0, 0, 0, 0.75);
+}
+.suggestion-text {}
+.suggestion-name {
+    font-weight: bold;
+}
+.suggestion-desc {}
+
+.search-results-attribution {
+    padding: 0.5em 0.75em;
+}
+.search-results-attribution a {
+    color: #667f91;
+}
+.search-results-attribution a:hover {
+    text-decoration: underline;
+}
+</style>

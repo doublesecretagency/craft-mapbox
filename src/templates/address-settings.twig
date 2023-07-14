@@ -1,9 +1,14 @@
-<script>
-    // Transfer PHP data to JavaScript via Twig
-    const addressFieldSettingsConfig = {{ config|json_encode|raw }};
-</script>
+<div id="address-settings-container" class="address-settings-container" data-config="{{ config|json_encode }}"></div>
 
-{# Initialize field settings on page load #}
-{% js 'initAddressFieldSettings();' %}
-
-<div id="address-settings-container" class="address-settings-container"></div>
+{% js %}
+// Start loop until libraries are defined
+const timer = setInterval(function () {
+    // Once libraries are defined
+    if (window.mapboxsearchcore) {
+        // Initialize field settings
+        window.initAddressFieldSettings();
+        // Cancel the loop
+        clearInterval(timer);
+    }
+}, 100);
+{% endjs %}

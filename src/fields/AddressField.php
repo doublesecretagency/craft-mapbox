@@ -95,6 +95,24 @@ class AddressField extends Field implements PreviewableFieldInterface
      */
     public ?array $subfieldConfig = Defaults::SUBFIELDCONFIG;
 
+    /**
+     * Icons to be loaded.
+     *
+     * @var array
+     */
+    private array $_icons = [
+        'iconOn' => 'marker.svg',
+        'iconOff' => 'marker-hollow.svg',
+        // https://github.com/mapbox/maki/tree/main/icons
+        'maki-lodging' => 'maki/lodging.svg',
+        'maki-restaurant' => 'maki/restaurant.svg',
+        'maki-bar' => 'maki/bar.svg',
+        'maki-fuel' => 'maki/fuel.svg',
+        'maki-cinema' => 'maki/cinema.svg',
+        'maki-marker' => 'maki/marker.svg',
+        'maki-default' => 'maki/marker-stroked.svg',
+    ];
+
     // ========================================================================= //
 
     /**
@@ -323,10 +341,7 @@ class AddressField extends Field implements PreviewableFieldInterface
                 ],
                 'settings' => $settings,
                 'data' => $this->_getAddressData($address),
-                'images' => $this->_publishImages([
-                    'iconOn' => 'marker.svg',
-                    'iconOff' => 'marker-hollow.svg',
-                ]),
+                'images' => $this->_publishImages($this->_icons),
             ]
         ]);
     }
@@ -356,11 +371,12 @@ class AddressField extends Field implements PreviewableFieldInterface
                 ],
                 'settings' => $this->_getExtraSettings(),
                 'data' => $this->_getAddressData(),
-                'images' => $this->_publishImages([
-                    'iconOn' => 'marker.svg',
-                    'iconOff' => 'marker-hollow.svg',
-                    'required' => 'required.png',
-                ]),
+                'images' => $this->_publishImages(
+                    array_merge(
+                        $this->_icons,
+                        ['required' => 'required.png']
+                    )
+                ),
             ]
         ]);
     }
@@ -375,12 +391,13 @@ class AddressField extends Field implements PreviewableFieldInterface
     public static function typecastSubfieldConfig(&$subfieldConfig): void
     {
         // Strictly typecast each subfield setting
-        array_walk($subfieldConfig, function (&$value) {
+        array_walk($subfieldConfig, static function (&$value) {
             $value = [
                 'handle'       => (string) ($value['handle'] ?? ''),
                 'label'        => (string) ($value['label'] ?? ''),
                 'width'        => (int) ($value['width'] ?? 100),
                 'enabled'      => (bool) ($value['enabled'] ?? false),
+                'autocomplete' => (bool) ($value['autocomplete'] ?? false),
                 'required'     => (bool) ($value['required'] ?? false),
             ];
         });
@@ -391,6 +408,7 @@ class AddressField extends Field implements PreviewableFieldInterface
     /**
      * Normalize the subfield configuration.
      *
+     * @param $subfieldConfig
      * @return array
      */
     private function _normalizeSubfieldConfig($subfieldConfig): array
@@ -424,16 +442,17 @@ class AddressField extends Field implements PreviewableFieldInterface
 
             // Append new config for each subfield
             $newConfig[] = [
-                'handle'   => $defaultConfig['handle'],
-                'label'    => (string) ($oldConfig['label'] ?? $defaultConfig['label']),
-                'width'    => (int) ($oldConfig['width'] ?? $defaultConfig['width']),
-                'enabled'  => (bool) ($oldConfig['enabled'] ?? false),
-                'required' => (bool) ($oldConfig['required'] ?? false),
+                'handle'       => $defaultConfig['handle'],
+                'label'        => (string) ($oldConfig['label'] ?? $defaultConfig['label']),
+                'width'        => (int) ($oldConfig['width'] ?? $defaultConfig['width']),
+                'enabled'      => (bool) ($oldConfig['enabled'] ?? false),
+                'autocomplete' => (bool) ($oldConfig['autocomplete'] ?? false),
+                'required'     => (bool) ($oldConfig['required'] ?? false),
             ];
         }
 
         // Reorder the new config based on the old config's `position` value
-        usort($newConfig, function ($a, $b) use ($subfieldConfig) {
+        usort($newConfig, static function ($a, $b) use ($subfieldConfig) {
 
             // Get original subfield configs
             $subfieldA = ($subfieldConfig[$a['handle']] ?? []);

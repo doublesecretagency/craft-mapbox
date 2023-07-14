@@ -36,6 +36,7 @@ abstract class Defaults
             'label'        => 'Street Address',
             'width'        => 100,
             'enabled'      => true,
+            'autocomplete' => true,
             'required'     => false
         ],
         [
@@ -43,6 +44,7 @@ abstract class Defaults
             'label'        => 'Apartment or Suite',
             'width'        => 100,
             'enabled'      => true,
+            'autocomplete' => false,
             'required'     => false
         ],
         [
@@ -50,6 +52,7 @@ abstract class Defaults
             'label'        => 'City',
             'width'        => 50,
             'enabled'      => true,
+            'autocomplete' => false,
             'required'     => false
         ],
         [
@@ -57,6 +60,7 @@ abstract class Defaults
             'label'        => 'State',
             'width'        => 15,
             'enabled'      => true,
+            'autocomplete' => false,
             'required'     => false
         ],
         [
@@ -64,6 +68,7 @@ abstract class Defaults
             'label'        => 'Zip Code',
             'width'        => 35,
             'enabled'      => true,
+            'autocomplete' => false,
             'required'     => false
         ],
         [
@@ -71,6 +76,7 @@ abstract class Defaults
             'label'        => 'Country',
             'width'        => 100,
             'enabled'      => true,
+            'autocomplete' => false,
             'required'     => false
         ],
     ];

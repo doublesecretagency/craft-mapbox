@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Can now select which subfields will use autocomplete.
+
+### Changed
+- Replaced the underlying search API used in the Address field.
+
 ## 1.0.1 - 2023-06-14
 
 ### Changed

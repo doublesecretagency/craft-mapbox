@@ -42,6 +42,9 @@ export const useAddressStore = defineStore('address', () => {
     const images = ref({});
     const formatting = ref(formatCountries);
 
+    const suggestions = ref([]);
+    const activeSuggestion = ref(null);
+
     // When address data is changed
     watch(data, () => {
         // Normalize the address info
@@ -189,6 +192,65 @@ export const useAddressStore = defineStore('address', () => {
     }
 
     /**
+     * Populate address data when a suggestion is selected.
+     */
+    function updateData(feature)
+    {
+        // Get address data & coordinates
+        const addressData = data.value.address;
+        const addressCoords = data.value.coords;
+
+        // Reset address meta data
+        addressData.formatted = null;
+        addressData.raw = null;
+
+        // Reset address coordinates
+        addressCoords.lng = null;
+        addressCoords.lat = null;
+
+        // If not already set, reset zoom level
+        addressCoords.zoom = (addressCoords.zoom || 11);
+
+        // Get coordinates of selected location
+        const lng = (feature.geometry.coordinates[0] || null);
+        const lat = (feature.geometry.coordinates[1] || null);
+
+        // Update address coordinates
+        addressCoords.lng = (lng ? parseFloat(lng.toFixed(7)) : null);
+        addressCoords.lat = (lat ? parseFloat(lat.toFixed(7)) : null);
+
+        // Update address meta data
+        addressData.name      = (feature.properties.name || null);
+        addressData.mapboxId  = (feature.properties.mapbox_id || null);
+        addressData.formatted = (feature.properties.full_address || null);
+        addressData.raw       = JSON.stringify(feature);
+
+        // Get feature context data
+        const c = feature.properties.context;
+
+        // Set address data to Vue
+        addressData.street1 = (c.address ? c.address.name : null);
+        addressData.street2 = null;
+        addressData.city    = (c.place ? c.place.name : null);
+        addressData.state   = (c.region ? c.region.region_code : null);
+        addressData.zip     = (c.postcode ? c.postcode.name : null);
+        addressData.county  = (c.district ? c.district.name : null);
+        addressData.country = (c.country ? c.country.name : null);
+
+        // Reset suggestions
+        this.suggestions = [];
+        this.activeSuggestion = null;
+
+        // If not changing the map visibility, bail
+        if ('noChange' === settings.mapOnSearch) {
+            return;
+        }
+
+        // Change map visibility based on settings
+        settings.showMap = ('open' === settings.mapOnSearch);
+    }
+
+    /**
      * Normalize the address data when anything changes.
      */
     function _normalizeData()
@@ -211,6 +273,8 @@ export const useAddressStore = defineStore('address', () => {
         data,
         images,
         formatting,
+        suggestions,
+        activeSuggestion,
 
         // Getters
         configToggle,
@@ -220,6 +284,7 @@ export const useAddressStore = defineStore('address', () => {
         // Actions
         changeVisibility,
         validateCoords,
+        updateData,
     }
 
 })

@@ -13,6 +13,7 @@
                         <th scope="col" class="singleline-cell textual">Label</th>
                         <th scope="col" class="number-cell textual" style="text-align:right">Width</th>
                         <th scope="col" class="checkbox-cell" style="text-align:center; cursor:help;" title="Selected subfields will be shown in the visible layout. (Non-selected subfields will be included as hidden inputs.)">Show</th>
+                        <th scope="col" class="checkbox-cell" style="text-align:center; cursor:help;" title="When typing an address, autocomplete will be active on the selected subfields.">Auto</th>
                         <th scope="col" class="checkbox-cell" style="text-align:center; cursor:help; white-space:nowrap;" title="If the field is marked as &quot;Required&quot;, it must include the selected subfields. See warning message below.">Req.<span class="required" aria-hidden="true"></span></th>
                         <th>&nbsp;</th>
                     </tr>
@@ -61,6 +62,18 @@
                                         class="checkbox"
                                         value="1"
                                     ><label :for="`enabled-${element.handle}`"></label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell" style="width:15%; text-align:center;">
+                                <div class="checkbox-wrapper">
+                                    <input
+                                        type="checkbox"
+                                        :name="getName(index, 'autocomplete')"
+                                        v-model="element.autocomplete"
+                                        :id="`autocomplete-${element.handle}`"
+                                        class="checkbox"
+                                        value="1"
+                                    ><label :for="`autocomplete-${element.handle}`"></label>
                                 </div>
                             </td>
                             <td class="checkbox-cell" style="width:15%; text-align:center;">
