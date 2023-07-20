@@ -18282,10 +18282,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var options = {
       accessToken: window.mapboxAccessToken,
       limit: 6
-      // proximity: {'lng':-118,'lat':31},
       // language: 'ja',
       // country: 'JP',
     };
+
+    // Attempt to determine coordinates
+    var proximity = this.proximity();
+
+    // If coords can be determined, set search proximity
+    if (proximity) {
+      options['proximity'] = proximity;
+    }
 
     // If libraries have not yet been defined
     if (!window.mapboxsearchcore) {
@@ -18322,6 +18329,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: {
     /**
+     * Determine target proximity for search.
+     */
+    proximity: function proximity() {
+      // Get the Pinia store
+      var a = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+      // If valid, get coords from the existing field data
+      if (a.validateCoords(a.data.coords)) {
+        // Use existing coordinates as the search center
+        return a.data.coords;
+      }
+
+      // If valid, get default coords from the field settings
+      if (a.validateCoords(a.settings.coordinatesDefault)) {
+        return a.settings.coordinatesDefault;
+      }
+
+      // No coords could be determined
+      return false;
+    },
+    // ========================================================================= //
+    /**
      * Add listeners for search events.
      */
     listeners: function listeners() {
@@ -18354,6 +18383,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
         // Load feature info
         addressStore.updateData(response.features[0]);
+        // If valid, get coords from the selected result
+        if (addressStore.validateCoords(addressStore.data.coords)) {
+          // Update the search center to use newly selected coordinates
+          session.search.defaults.proximity = addressStore.data.coords;
+        }
       });
     },
     // ========================================================================= //
@@ -19299,6 +19333,7 @@ var useAddressStore = (0,pinia__WEBPACK_IMPORTED_MODULE_1__.defineStore)('addres
     addressData.city = c.place ? c.place.name : null;
     addressData.state = c.region ? c.region.region_code : null;
     addressData.zip = c.postcode ? c.postcode.name : null;
+    addressData.neighborhood = c.neighborhood ? c.neighborhood.name : null;
     addressData.county = c.district ? c.district.name : null;
     addressData.country = c.country ? c.country.name : null;
 

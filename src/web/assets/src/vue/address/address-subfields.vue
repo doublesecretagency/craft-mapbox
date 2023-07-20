@@ -70,10 +70,17 @@ export default {
         const options = {
             accessToken: window.mapboxAccessToken,
             limit: 6,
-            // proximity: {'lng':-118,'lat':31},
             // language: 'ja',
             // country: 'JP',
         };
+
+        // Attempt to determine coordinates
+        const proximity = this.proximity();
+
+        // If coords can be determined, set search proximity
+        if (proximity) {
+            options['proximity'] = proximity;
+        }
 
         // If libraries have not yet been defined
         if (!window.mapboxsearchcore) {
@@ -114,6 +121,30 @@ export default {
     methods: {
 
         /**
+         * Determine target proximity for search.
+         */
+        proximity() {
+            // Get the Pinia store
+            const a = useAddressStore();
+
+            // If valid, get coords from the existing field data
+            if (a.validateCoords(a.data.coords)) {
+                // Use existing coordinates as the search center
+                return a.data.coords;
+            }
+
+            // If valid, get default coords from the field settings
+            if (a.validateCoords(a.settings.coordinatesDefault)) {
+                return a.settings.coordinatesDefault;
+            }
+
+            // No coords could be determined
+            return false;
+        },
+
+        // ========================================================================= //
+
+        /**
          * Add listeners for search events.
          */
         listeners()
@@ -147,6 +178,11 @@ export default {
                 }
                 // Load feature info
                 addressStore.updateData(response.features[0]);
+                // If valid, get coords from the selected result
+                if (addressStore.validateCoords(addressStore.data.coords)) {
+                    // Update the search center to use newly selected coordinates
+                    session.search.defaults.proximity = addressStore.data.coords;
+                }
             });
         },
 

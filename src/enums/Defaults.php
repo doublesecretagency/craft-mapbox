@@ -32,6 +32,14 @@ abstract class Defaults
      */
     public const SUBFIELDCONFIG = [
         [
+            'handle'       => 'name',
+            'label'        => 'Name',
+            'width'        => 100,
+            'enabled'      => false,
+            'autocomplete' => false,
+            'required'     => false
+        ],
+        [
             'handle'       => 'street1',
             'label'        => 'Street Address',
             'width'        => 100,
@@ -72,10 +80,34 @@ abstract class Defaults
             'required'     => false
         ],
         [
+            'handle'       => 'neighborhood',
+            'label'        => 'Neighborhood',
+            'width'        => 100,
+            'enabled'      => false,
+            'autocomplete' => false,
+            'required'     => false
+        ],
+        [
+            'handle'       => 'county',
+            'label'        => 'County or District',
+            'width'        => 100,
+            'enabled'      => false,
+            'autocomplete' => false,
+            'required'     => false
+        ],
+        [
             'handle'       => 'country',
             'label'        => 'Country',
             'width'        => 100,
             'enabled'      => true,
+            'autocomplete' => false,
+            'required'     => false
+        ],
+        [
+            'handle'       => 'mapboxId',
+            'label'        => 'Mapbox ID',
+            'width'        => 100,
+            'enabled'      => false,
             'autocomplete' => false,
             'required'     => false
         ],

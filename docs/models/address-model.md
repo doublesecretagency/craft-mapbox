@@ -46,6 +46,10 @@ _string_ - A nicely-formatted single-line interpretation of the address, provide
 
 _array_ - The original data used to create this Address Model. Contains the full response from the original Mapbox API call.
 
+### `name`
+
+_string_ - The location's official name. Commonly used for landmarks and business names.
+
 ### `street1`
 
 _string_ - The first line of the street address. Usually contains the street name & number of the location.
@@ -66,9 +70,25 @@ _string_ - The state. (aka: province)
 
 _string_ - The zip code. (aka: postal code)
 
+### `neighborhood`
+
+_string_ - The neighborhood, if one exists.
+
+### `county`
+
+_string_ - The local county. (aka: district)
+
 ### `country`
 
 _string_ - The country. (aka: nation)
+
+:::warning Similar sounding, but very different
+We recognize that `county` and `country` are extremely similar words, and apologize on behalf of the English language.
+:::
+
+### `mapboxId`
+
+_string_ - A unique ID assigned by the Mapbox API.
 
 ### `distance`
 

@@ -229,13 +229,14 @@ export const useAddressStore = defineStore('address', () => {
         const c = feature.properties.context;
 
         // Set address data to Vue
-        addressData.street1 = (c.address ? c.address.name : null);
-        addressData.street2 = null;
-        addressData.city    = (c.place ? c.place.name : null);
-        addressData.state   = (c.region ? c.region.region_code : null);
-        addressData.zip     = (c.postcode ? c.postcode.name : null);
-        addressData.county  = (c.district ? c.district.name : null);
-        addressData.country = (c.country ? c.country.name : null);
+        addressData.street1      = (c.address ? c.address.name : null);
+        addressData.street2      = null;
+        addressData.city         = (c.place ? c.place.name : null);
+        addressData.state        = (c.region ? c.region.region_code : null);
+        addressData.zip          = (c.postcode ? c.postcode.name : null);
+        addressData.neighborhood = (c.neighborhood ? c.neighborhood.name : null);
+        addressData.county       = (c.district ? c.district.name : null);
+        addressData.country      = (c.country ? c.country.name : null);
 
         // Reset suggestions
         this.suggestions = [];

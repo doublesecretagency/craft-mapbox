@@ -3,6 +3,10 @@
 ## Unreleased
 
 ### Added
+- Addresses now include an optional [`name`](https://plugins.doublesecretagency.com/mapbox/models/address-model/#name) subfield. ([#4](https://github.com/doublesecretagency/craft-mapbox/issues/4))
+- Addresses now include an optional [`neighborhood`](https://plugins.doublesecretagency.com/mapbox/models/address-model/#neighborhood) subfield.
+- Addresses now include an optional [`county`](https://plugins.doublesecretagency.com/mapbox/models/address-model/#county) subfield.
+- Addresses now include an optional [`mapboxId`](https://plugins.doublesecretagency.com/mapbox/models/address-model/#mapboxid) subfield.
 - Can now select which subfields will use autocomplete.
 
 ### Changed

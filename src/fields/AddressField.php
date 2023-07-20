@@ -109,6 +109,7 @@ class AddressField extends Field implements PreviewableFieldInterface
         'maki-bar' => 'maki/bar.svg',
         'maki-fuel' => 'maki/fuel.svg',
         'maki-cinema' => 'maki/cinema.svg',
+        'maki-library' => 'maki/library.svg',
         'maki-marker' => 'maki/marker.svg',
         'maki-default' => 'maki/marker-stroked.svg',
     ];
@@ -177,17 +178,21 @@ class AddressField extends Field implements PreviewableFieldInterface
 
         // Set record attributes
         $record->setAttributes([
-            'formatted' => ($data['formatted'] ?: null),
-            'raw'       => ($data['raw'] ?: null),
-            'street1'   => ($data['street1'] ?: null),
-            'street2'   => ($data['street2'] ?: null),
-            'city'      => ($data['city'] ?: null),
-            'state'     => ($data['state'] ?: null),
-            'zip'       => ($data['zip'] ?: null),
-            'country'   => ($data['country'] ?: null),
-            'lng'       => $lng,
-            'lat'       => $lat,
-            'zoom'      => $zoom,
+            'formatted'    => ($data['formatted'] ?: null),
+            'raw'          => ($data['raw'] ?: null),
+            'name'         => ($data['name'] ?: null),
+            'street1'      => ($data['street1'] ?: null),
+            'street2'      => ($data['street2'] ?: null),
+            'city'         => ($data['city'] ?: null),
+            'state'        => ($data['state'] ?: null),
+            'zip'          => ($data['zip'] ?: null),
+            'neighborhood' => ($data['neighborhood'] ?: null),
+            'county'       => ($data['county'] ?: null),
+            'country'      => ($data['country'] ?: null),
+            'mapboxId'     => ($data['mapboxId'] ?: null),
+            'lng'          => $lng,
+            'lat'          => $lat,
+            'zoom'         => $zoom,
         ], false);
 
         // Save record
@@ -221,19 +226,23 @@ class AddressField extends Field implements PreviewableFieldInterface
             }
             // Return Address model
             return new AddressModel([
-                'elementId' => (int) ($element->id ?? null),
-                'fieldId'   => (int) ($this->id ?? null),
-                'formatted' => (($value['formatted'] ?? null) ?: null),
-                'raw'       => (($value['raw'] ?? null) ?: null),
-                'street1'   => ($value['street1'] ?? null),
-                'street2'   => ($value['street2'] ?? null),
-                'city'      => ($value['city'] ?? null),
-                'state'     => ($value['state'] ?? null),
-                'zip'       => ($value['zip'] ?? null),
-                'country'   => ($value['country'] ?? null),
-                'lng'       => (is_numeric($lng) ? (float) $lng : null),
-                'lat'       => (is_numeric($lat) ? (float) $lat : null),
-                'zoom'      => (is_numeric($zoom) ? (float) $zoom : null),
+                'elementId'    => (int) ($element->id ?? null),
+                'fieldId'      => (int) ($this->id ?? null),
+                'formatted'    => (($value['formatted'] ?? null) ?: null),
+                'raw'          => (($value['raw'] ?? null) ?: null),
+                'name'         => ($value['name'] ?? null),
+                'street1'      => ($value['street1'] ?? null),
+                'street2'      => ($value['street2'] ?? null),
+                'city'         => ($value['city'] ?? null),
+                'state'        => ($value['state'] ?? null),
+                'zip'          => ($value['zip'] ?? null),
+                'neighborhood' => ($value['neighborhood'] ?? null),
+                'county'       => ($value['county'] ?? null),
+                'country'      => ($value['country'] ?? null),
+                'mapboxId'     => ($value['mapboxId'] ?? null),
+                'lng'          => (is_numeric($lng) ? (float) $lng : null),
+                'lat'          => (is_numeric($lat) ? (float) $lat : null),
+                'zoom'         => (is_numeric($zoom) ? (float) $zoom : null),
             ]);
         }
 
@@ -421,7 +430,28 @@ class AddressField extends Field implements PreviewableFieldInterface
         if ($isSequential) {
             // Strictly typecast all subfield settings
             static::typecastSubfieldConfig($subfieldConfig);
-            // Return the existing subfield config
+
+            // Get a list of all subfield handles which already exist
+            $existingHandles = array_map(
+                static function ($item) {
+                    return $item['handle'];
+                },
+                $subfieldConfig
+            );
+
+            // If handle doesn't exist, add it to list of missing subfields
+            $missing = array_filter(
+                Defaults::SUBFIELDCONFIG,
+                static function ($item) use ($existingHandles) {
+                    // Return whether handle does not exist
+                    return !in_array($item['handle'], $existingHandles, true);
+                }
+            );
+
+            // Append any missing subfields
+            $subfieldConfig = array_merge($subfieldConfig, $missing);
+
+            // Return the subfield config
             return $subfieldConfig;
         }
 
@@ -505,14 +535,18 @@ class AddressField extends Field implements PreviewableFieldInterface
 
         return [
             'address'=> [
-                'formatted' => ($address->formatted ?? null),
-                'raw'       => $raw,
-                'street1'   => ($address->street1 ?? null),
-                'street2'   => ($address->street2 ?? null),
-                'city'      => ($address->city ?? null),
-                'state'     => ($address->state ?? null),
-                'zip'       => ($address->zip ?? null),
-                'country'   => ($address->country ?? null),
+                'formatted'    => ($address->formatted ?? null),
+                'raw'          => $raw,
+                'name'         => ($address->name ?? null),
+                'street1'      => ($address->street1 ?? null),
+                'street2'      => ($address->street2 ?? null),
+                'city'         => ($address->city ?? null),
+                'state'        => ($address->state ?? null),
+                'zip'          => ($address->zip ?? null),
+                'neighborhood' => ($address->neighborhood ?? null),
+                'county'       => ($address->county ?? null),
+                'country'      => ($address->country ?? null),
+                'mapboxId'     => ($address->mapboxId ?? null),
             ],
             'coords'=> [
                 'lng'  => ($address->lng ?? null),

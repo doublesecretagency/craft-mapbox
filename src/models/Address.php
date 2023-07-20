@@ -50,6 +50,11 @@ class Address extends Location
     public ?array $raw = null;
 
     /**
+     * @var string|null Name of place or business.
+     */
+    public ?string $name = null;
+
+    /**
      * @var string|null Street name and number.
      */
     public ?string $street1 = null;
@@ -75,9 +80,24 @@ class Address extends Location
     public ?string $zip = null;
 
     /**
+     * @var string|null Neighborhood.
+     */
+    public ?string $neighborhood = null;
+
+    /**
+     * @var string|null County or district (political or administrative).
+     */
+    public ?string $county = null;
+
+    /**
      * @var string|null Country.
      */
     public ?string $country = null;
+
+    /**
+     * @var string|null Unique ID as assigned by the Mapbox API.
+     */
+    public ?string $mapboxId = null;
 
     /**
      * @var float|null Distance from another specified point.
