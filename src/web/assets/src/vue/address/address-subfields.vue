@@ -65,23 +65,6 @@ import { toRaw } from 'vue';
 
 export default {
     data() {
-        // Configure the search object
-        // https://docs.mapbox.com/mapbox-search-js/api/core/search/#searchboxoptions
-        const options = {
-            accessToken: window.mapboxAccessToken,
-            limit: 6,
-            // language: 'ja',
-            // country: 'JP',
-        };
-
-        // Attempt to determine coordinates
-        const proximity = this.proximity();
-
-        // If coords can be determined, set search proximity
-        if (proximity) {
-            options['proximity'] = proximity;
-        }
-
         // If libraries have not yet been defined
         if (!window.mapboxsearchcore) {
             // Log error and bail
@@ -93,6 +76,9 @@ export default {
             SearchBoxCore,
             SearchSession
         } = window.mapboxsearchcore;
+
+        // Configure the search options
+        const options = this.configureOptions();
 
         // Configure search session
         const search = new SearchBoxCore(options);
@@ -119,6 +105,54 @@ export default {
         this.listeners();
     },
     methods: {
+
+        /**
+         * Configure the field options.
+         */
+        configureOptions()
+        {
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+
+            // Configure the search object
+            // https://docs.mapbox.com/mapbox-search-js/api/core/search/#searchboxoptions
+            const options = {
+                accessToken: window.mapboxAccessToken,
+            };
+
+            // Get optional field parameters
+            const fieldParams = (addressStore.settings.fieldParams || {});
+
+            // Set maximum number of search results (default 6)
+            options['limit'] = (fieldParams.limit || 6);
+
+            // If limit is more than 10, emit warning and set to 10
+            if (10 < options['limit']) {
+                console.warn('[GM] Search results limit may not exceed 10.');
+                options['limit'] = 10;
+            }
+
+            // Set language of search results (default English)
+            options['language'] = (fieldParams.language || 'en');
+
+            // If restricted to one country, specify country
+            if (fieldParams.country) {
+                options['country'] = fieldParams.country;
+            }
+
+            // Attempt to determine coordinates
+            const proximity = this.proximity();
+
+            // If coords can be determined, set search proximity
+            if (proximity) {
+                options['proximity'] = proximity;
+            }
+
+            // Return fully configured options
+            return options;
+        },
+
+        // ========================================================================= //
 
         /**
          * Determine target proximity for search.

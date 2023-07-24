@@ -510,6 +510,9 @@ class AddressField extends Field implements PreviewableFieldInterface
         // Get basic settings
         $settings = $this->getSettings();
 
+        // Get optional field parameters
+        $settings['fieldParams'] = MapboxPlugin::$plugin->getSettings()->fieldParams;
+
         // Set whether to show the map on initial load
         $settings['showMap'] = ('open' === $settings['mapOnStart']);
 

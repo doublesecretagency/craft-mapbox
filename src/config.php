@@ -22,4 +22,11 @@ return [
     // Whether to log JS progress to the console (when a map is rendered)
     //'enableJsLogging' => true,
 
+    // Additional optional parameters for configuring Address fields
+    //'fieldParams' => [
+    //    'limit' => 6,       // Number of results to return (max 10)
+    //    'language' => 'en', // https://en.wikipedia.org/wiki/IETF_language_tag
+    //    'country' => null,  // https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+    //]
+
 ];

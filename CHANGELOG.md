@@ -8,6 +8,7 @@
 - Addresses now include an optional [`county`](https://plugins.doublesecretagency.com/mapbox/models/address-model/#county) subfield.
 - Addresses now include an optional [`mapboxId`](https://plugins.doublesecretagency.com/mapbox/models/address-model/#mapboxid) subfield.
 - Can now select which subfields will use autocomplete.
+- Added [`fieldParams`](https://plugins.doublesecretagency.com/mapbox/getting-started/config/#fieldparams) setting to configure the language of Address fields. ([#7](https://github.com/doublesecretagency/craft-mapbox/pull/7))
 
 ### Changed
 - Replaced the underlying search API used in the Address field.

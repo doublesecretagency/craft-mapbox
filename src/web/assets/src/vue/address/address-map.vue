@@ -107,6 +107,9 @@ export default {
                         return;
                     }
 
+                    // Get optional field parameters
+                    const fieldParams = (addressStore.settings.fieldParams || {});
+
                     // Determine map center
                     let mapCenter = {
                         lng: parseFloat(startingPosition.lng),
@@ -121,6 +124,7 @@ export default {
                         'zoom': parseFloat(startingPosition.zoom) || 0,
                         'minZoom': 0,
                         'style': 'mapbox://styles/mapbox/streets-v12',
+                        'language': fieldParams.language || 'en',
                         'attributionControl': false
                     };
 

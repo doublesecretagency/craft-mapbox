@@ -30,4 +30,9 @@ class Settings extends Model
      */
     public bool $enableJsLogging = true;
 
+    /**
+     * @var array Additional optional parameters for configuring Address fields.
+     */
+    public array $fieldParams = [];
+
 }

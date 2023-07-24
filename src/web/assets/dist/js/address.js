@@ -18050,6 +18050,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             return;
           }
 
+          // Get optional field parameters
+          var fieldParams = addressStore.settings.fieldParams || {};
+
           // Determine map center
           var mapCenter = {
             lng: parseFloat(startingPosition.lng),
@@ -18064,6 +18067,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             'zoom': parseFloat(startingPosition.zoom) || 0,
             'minZoom': 0,
             'style': 'mapbox://styles/mapbox/streets-v12',
+            'language': fieldParams.language || 'en',
             'attributionControl': false
           };
 
@@ -18277,23 +18281,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
-    // Configure the search object
-    // https://docs.mapbox.com/mapbox-search-js/api/core/search/#searchboxoptions
-    var options = {
-      accessToken: window.mapboxAccessToken,
-      limit: 6
-      // language: 'ja',
-      // country: 'JP',
-    };
-
-    // Attempt to determine coordinates
-    var proximity = this.proximity();
-
-    // If coords can be determined, set search proximity
-    if (proximity) {
-      options['proximity'] = proximity;
-    }
-
     // If libraries have not yet been defined
     if (!window.mapboxsearchcore) {
       // Log error and bail
@@ -18304,6 +18291,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _window$mapboxsearchc = window.mapboxsearchcore,
       SearchBoxCore = _window$mapboxsearchc.SearchBoxCore,
       SearchSession = _window$mapboxsearchc.SearchSession;
+
+    // Configure the search options
+    var options = this.configureOptions();
 
     // Configure search session
     var search = new SearchBoxCore(options);
@@ -18328,6 +18318,51 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.listeners();
   },
   methods: {
+    /**
+     * Configure the field options.
+     */
+    configureOptions: function configureOptions() {
+      // Get the Pinia store
+      var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+      // Configure the search object
+      // https://docs.mapbox.com/mapbox-search-js/api/core/search/#searchboxoptions
+      var options = {
+        accessToken: window.mapboxAccessToken
+      };
+
+      // Get optional field parameters
+      var fieldParams = addressStore.settings.fieldParams || {};
+
+      // Set maximum number of search results (default 6)
+      options['limit'] = fieldParams.limit || 6;
+
+      // If limit is more than 10, emit warning and set to 10
+      if (10 < options['limit']) {
+        console.warn('[GM] Search results limit may not exceed 10.');
+        options['limit'] = 10;
+      }
+
+      // Set language of search results (default English)
+      options['language'] = fieldParams.language || 'en';
+
+      // If restricted to one country, specify country
+      if (fieldParams.country) {
+        options['country'] = fieldParams.country;
+      }
+
+      // Attempt to determine coordinates
+      var proximity = this.proximity();
+
+      // If coords can be determined, set search proximity
+      if (proximity) {
+        options['proximity'] = proximity;
+      }
+
+      // Return fully configured options
+      return options;
+    },
+    // ========================================================================= //
     /**
      * Determine target proximity for search.
      */
