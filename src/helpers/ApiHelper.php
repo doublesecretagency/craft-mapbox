@@ -82,6 +82,10 @@ class ApiHelper
                 // Search API
                 $apiUrl .= 'search-js/v1.0.0-beta.17/core.js';
                 break;
+            case 'language':
+                // Plugin for improved language support
+                $apiUrl .= 'mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js';
+                break;
 //            case 'navigation':
 //                $baseUrl .= '';
 //                break;

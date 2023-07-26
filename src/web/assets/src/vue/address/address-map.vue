@@ -103,12 +103,9 @@ export default {
 
                     // If mapboxgl object doesn't exist yet, log message and bail
                     if (!mapboxgl) {
-                        console.error('[GM] The `mapboxgl` object has not yet been loaded.');
+                        console.error('[MB] The `mapboxgl` object has not yet been loaded.');
                         return;
                     }
-
-                    // Get optional field parameters
-                    const fieldParams = (addressStore.settings.fieldParams || {});
 
                     // Determine map center
                     let mapCenter = {
@@ -124,17 +121,23 @@ export default {
                         'zoom': parseFloat(startingPosition.zoom) || 0,
                         'minZoom': 0,
                         'style': 'mapbox://styles/mapbox/streets-v12',
-                        'language': fieldParams.language || 'en',
                         'attributionControl': false
                     };
 
-                    // Set marker options
-                    const markerOptions = {
-                        'draggable': true,
-                    };
+                    // Get new instance of the language module
+                    const LanguageModule = new MapboxLanguage();
+
+                    // Get the user's preferred language
+                    const language = this._getLanguage(LanguageModule.supportedLanguages);
+
+                    // If language is valid, append it
+                    if (language) {
+                        mapOptions.language = language;
+                    }
 
                     // Create the map
                     this.map = new mapboxgl.Map(mapOptions)
+                        .addControl(LanguageModule)
                         .addControl(new mapboxgl.NavigationControl({
                             'showCompass': false,
                         }))
@@ -145,6 +148,11 @@ export default {
                             'trackUserLocation': true,
                             'showUserHeading': true,
                         }));
+
+                    // Set marker options
+                    const markerOptions = {
+                        'draggable': true,
+                    };
 
                     // Create a draggable marker
                     this.marker = new mapboxgl.Marker(markerOptions)
@@ -183,6 +191,37 @@ export default {
 
             }, 40);
 
+        },
+
+        // ========================================================================= //
+
+        /**
+         * Get a valid user-preferred language (if possible).
+         */
+        _getLanguage(supportedLanguages)
+        {
+            // Get the Pinia store
+            const addressStore = useAddressStore();
+
+            // Get optional field parameters
+            const fieldParams = (addressStore.settings.fieldParams || {});
+
+            // If no user language, return null
+            if (!fieldParams.language) {
+                return null;
+            }
+
+            // Determine whether the user's language is supported
+            const isSupported = (0 <= supportedLanguages.indexOf(fieldParams.language));
+
+            // If user's language is not supported, emit warning and return null
+            if (!isSupported) {
+                console.warn(`[MB] The user's preferred language (${fieldParams.language}) is not supported by Mapbox GL JS (the Mapbox API responsible for rendering maps). Geographic names will be presented in English by default.`);
+                return null;
+            }
+
+            // Return the supported language
+            return fieldParams.language;
         },
 
         // ========================================================================= //

@@ -511,7 +511,16 @@ class AddressField extends Field implements PreviewableFieldInterface
         $settings = $this->getSettings();
 
         // Get optional field parameters
-        $settings['fieldParams'] = MapboxPlugin::$plugin->getSettings()->fieldParams;
+        $fieldParams = (MapboxPlugin::$plugin->getSettings()->fieldParams ?? []);
+
+        // If the language has not already been set
+        if (!($fieldParams['language'] ?? null)) {
+            // Get the user's preferred language
+            $fieldParams['language'] = $this->_getLanguage();
+        }
+
+        // Set field parameters
+        $settings['fieldParams'] = $fieldParams;
 
         // Set whether to show the map on initial load
         $settings['showMap'] = ('open' === $settings['mapOnStart']);
@@ -521,6 +530,34 @@ class AddressField extends Field implements PreviewableFieldInterface
 
         // Return settings
         return $settings;
+    }
+
+    /**
+     * Get a valid user-preferred language (if possible).
+     *
+     * @return string|null
+     */
+    private function _getLanguage(): ?string
+    {
+        // Get current user
+        $currentUser = Craft::$app->getUser()->getIdentity();
+
+        // Get the user's preferred language
+        $language = ($currentUser->preferredLanguage ?? null);
+
+        // If user has no preferred language, bail
+        if (!$language) {
+            return null;
+        }
+
+        // Strip dash and remaining letters
+        $language = preg_replace('/-.*/', '', $language);
+
+        // Select variant of Chinese
+        $language = preg_replace('/^zh$/', 'zh-Hans', $language);
+
+        // Return preferred language
+        return $language;
     }
 
     /**

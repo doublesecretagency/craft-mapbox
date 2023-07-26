@@ -18046,12 +18046,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           // If mapboxgl object doesn't exist yet, log message and bail
           if (!mapboxgl) {
-            console.error('[GM] The `mapboxgl` object has not yet been loaded.');
+            console.error('[MB] The `mapboxgl` object has not yet been loaded.');
             return;
           }
-
-          // Get optional field parameters
-          var fieldParams = addressStore.settings.fieldParams || {};
 
           // Determine map center
           var mapCenter = {
@@ -18067,17 +18064,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             'zoom': parseFloat(startingPosition.zoom) || 0,
             'minZoom': 0,
             'style': 'mapbox://styles/mapbox/streets-v12',
-            'language': fieldParams.language || 'en',
             'attributionControl': false
           };
 
-          // Set marker options
-          var markerOptions = {
-            'draggable': true
-          };
+          // Get new instance of the language module
+          var LanguageModule = new MapboxLanguage();
+
+          // Get the user's preferred language
+          var language = _this2._getLanguage(LanguageModule.supportedLanguages);
+
+          // If language is valid, append it
+          if (language) {
+            mapOptions.language = language;
+          }
 
           // Create the map
-          _this2.map = new mapboxgl.Map(mapOptions).addControl(new mapboxgl.NavigationControl({
+          _this2.map = new mapboxgl.Map(mapOptions).addControl(LanguageModule).addControl(new mapboxgl.NavigationControl({
             'showCompass': false
           })).addControl(new mapboxgl.GeolocateControl({
             'positionOptions': {
@@ -18086,6 +18088,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             'trackUserLocation': true,
             'showUserHeading': true
           }));
+
+          // Set marker options
+          var markerOptions = {
+            'draggable': true
+          };
 
           // Create a draggable marker
           _this2.marker = new mapboxgl.Marker(markerOptions).setLngLat(mapCenter).addTo(_this2.map);
@@ -18117,6 +18124,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           console.error(error);
         }
       }, 40);
+    },
+    // ========================================================================= //
+    /**
+     * Get a valid user-preferred language (if possible).
+     */
+    _getLanguage: function _getLanguage(supportedLanguages) {
+      // Get the Pinia store
+      var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
+
+      // Get optional field parameters
+      var fieldParams = addressStore.settings.fieldParams || {};
+
+      // If no user language, return null
+      if (!fieldParams.language) {
+        return null;
+      }
+
+      // Determine whether the user's language is supported
+      var isSupported = 0 <= supportedLanguages.indexOf(fieldParams.language);
+
+      // If user's language is not supported, emit warning and return null
+      if (!isSupported) {
+        console.warn("[MB] The user's preferred language (".concat(fieldParams.language, ") is not supported by Mapbox GL JS (the Mapbox API responsible for rendering maps). Geographic names will be presented in English by default."));
+        return null;
+      }
+
+      // Return the supported language
+      return fieldParams.language;
     },
     // ========================================================================= //
     /**
@@ -18339,12 +18374,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       // If limit is more than 10, emit warning and set to 10
       if (10 < options['limit']) {
-        console.warn('[GM] Search results limit may not exceed 10.');
+        console.warn('[MB] Search results limit may not exceed 10.');
         options['limit'] = 10;
       }
 
-      // Set language of search results (default English)
-      options['language'] = fieldParams.language || 'en';
+      // Get the user's preferred language
+      var language = this._getLanguage(fieldParams.language);
+
+      // If language specified, use it
+      if (language) {
+        options['language'] = language;
+      }
 
       // If restricted to one country, specify country
       if (fieldParams.country) {
@@ -18361,6 +18401,76 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       // Return fully configured options
       return options;
+    },
+    // ========================================================================= //
+    /**
+     * Get a valid user-preferred language (if possible).
+     */
+    _getLanguage: function _getLanguage(language) {
+      // List of supported languages
+      // https://docs.mapbox.com/api/search/search-box/#language-and-geography-support
+      var supportedLanguages = ['cs',
+      // Czech
+      'hr',
+      // Croatian
+      'da',
+      // Danish
+      'nl',
+      // Dutch
+      'en',
+      // English
+      'et',
+      // Estonian
+      'fi',
+      // Finnish
+      'fr',
+      // French
+      'de',
+      // German
+      'el',
+      // Greek
+      'hu',
+      // Hungarian
+      'it',
+      // Italian
+      'ja',
+      // Japanese
+      'lt',
+      // Lithuanian
+      'lv',
+      // Latvian
+      'pl',
+      // Polish
+      'pt',
+      // Portuguese
+      'ro',
+      // Romanian
+      'ru',
+      // Russian
+      'sk',
+      // Slovak
+      'sl',
+      // Slovenian
+      'es',
+      // Spanish
+      'sv',
+      // Swedish
+      'tr',
+      // Turkish
+      'uk' // Ukrainian
+      ];
+
+      // Determine whether the user's language is supported
+      var isSupported = 0 <= supportedLanguages.indexOf(language);
+
+      // If user's language is not supported, emit warning and return null
+      if (!isSupported) {
+        console.warn("[MB] The user's preferred language (".concat(language, ") is not supported by the Search Box API (the Mapbox API responsible for handling address lookups). Search results will be presented in English by default."));
+        return null;
+      }
+
+      // Return the supported language
+      return language;
     },
     // ========================================================================= //
     /**

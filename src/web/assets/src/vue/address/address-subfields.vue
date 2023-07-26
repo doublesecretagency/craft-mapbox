@@ -128,12 +128,17 @@ export default {
 
             // If limit is more than 10, emit warning and set to 10
             if (10 < options['limit']) {
-                console.warn('[GM] Search results limit may not exceed 10.');
+                console.warn('[MB] Search results limit may not exceed 10.');
                 options['limit'] = 10;
             }
 
-            // Set language of search results (default English)
-            options['language'] = (fieldParams.language || 'en');
+            // Get the user's preferred language
+            const language = this._getLanguage(fieldParams.language);
+
+            // If language specified, use it
+            if (language) {
+                options['language'] = language;
+            }
 
             // If restricted to one country, specify country
             if (fieldParams.country) {
@@ -150,6 +155,56 @@ export default {
 
             // Return fully configured options
             return options;
+        },
+
+        // ========================================================================= //
+
+        /**
+         * Get a valid user-preferred language (if possible).
+         */
+        _getLanguage(language)
+        {
+            // List of supported languages
+            // https://docs.mapbox.com/api/search/search-box/#language-and-geography-support
+            const supportedLanguages = [
+                'cs', // Czech
+                'hr', // Croatian
+                'da', // Danish
+                'nl', // Dutch
+                'en', // English
+                'et', // Estonian
+                'fi', // Finnish
+                'fr', // French
+                'de', // German
+                'el', // Greek
+                'hu', // Hungarian
+                'it', // Italian
+                'ja', // Japanese
+                'lt', // Lithuanian
+                'lv', // Latvian
+                'pl', // Polish
+                'pt', // Portuguese
+                'ro', // Romanian
+                'ru', // Russian
+                'sk', // Slovak
+                'sl', // Slovenian
+                'es', // Spanish
+                'sv', // Swedish
+                'tr', // Turkish
+                'uk', // Ukrainian
+            ];
+
+            // Determine whether the user's language is supported
+            const isSupported = (0 <= supportedLanguages.indexOf(language));
+
+            // If user's language is not supported, emit warning and return null
+            if (!isSupported) {
+                console.warn(`[MB] The user's preferred language (${language}) is not supported by the Search Box API (the Mapbox API responsible for handling address lookups). Search results will be presented in English by default.`);
+                return null;
+            }
+
+            // Return the supported language
+            return language;
         },
 
         // ========================================================================= //

@@ -44,6 +44,7 @@ class AddressFieldAsset extends AssetBundle
         $this->js = [
             Mapbox::getApiUrl('maps'),
             Mapbox::getApiUrl('search'),
+            Mapbox::getApiUrl('language'),
             'js/address.js',
         ];
     }
