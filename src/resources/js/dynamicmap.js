@@ -340,10 +340,14 @@ function DynamicMap(locations, options) {
             return this;
         }
 
-        // Re-create marker object
-        this._markers[markerId] = new mapboxgl.Marker(options)
+        this._markers[markerId] = this._MarkerProxy(
+            new mapboxgl.Marker(
+                this._getCallbackOption(options, [oldMarker.location])
+            ),
+            oldMarker.location
+        )
             .setLngLat(oldMarker.getLngLat())
-            .addTo(this._map);
+            .addTo(this._map)
 
         // If a popup exists for this marker
         if (this._popups[markerId]) {
@@ -734,9 +738,14 @@ function DynamicMap(locations, options) {
         }
 
         // Initialize marker object
-        this._markers[markerId] = new mapboxgl.Marker(options.markerOptions)
+        this._markers[markerId] = this._MarkerProxy(
+            new mapboxgl.Marker(
+                this._getCallbackOption(options.markerOptions, [coords])
+            ),
+            coords
+        )
             .setLngLat([coords.lng, coords.lat])
-            .addTo(this._map);
+            .addTo(this._map)
 
         // If no popups exist, bail
         if (!window._mbData || !window._mbData.popups) {
@@ -1014,7 +1023,52 @@ function DynamicMap(locations, options) {
         return (prefix ? `${prefix}-${randomId}` : randomId);
     };
 
+    this._getCallbackOption = function(option, args = []) {
+        if (option && typeof option === 'function') {
+            return option.apply(this, args)
+        }
+
+        if (option && typeof option === 'string') {
+            const fn = this._getCallbackFn(option)
+            if (fn && typeof fn === 'function') {
+                return fn.apply(this, args)
+            }
+
+            return {}
+        }
+
+        return option
+    }
+
+    this._getCallbackFn = function( value ) {
+        if (typeof value === 'string') {
+            // Check if function exists globally
+            if (typeof (window || this)[value] === 'function') {
+                return (window || this)[value]
+            }
+        }
+
+        return value
+    }
+
+    // This proxy will return the mapbox marker instance
+    // but route the location / coords object if
+    this._MarkerProxy = function( mbMarker, location = null ) {
+        return new Proxy(mbMarker, {
+          get: (target, prop) => {
+            if (prop === 'location') {
+                if (!location) {
+                    // Log error message
+                    console.warn(`[MB] Marker location undefined`);
+                }
+                return location || undefined
+            }
+            return Reflect.get(target, prop)
+          },
+        })
+    }
+
     // Prepare the object
     this.__construct(locations, options);
 
-}
+  }
