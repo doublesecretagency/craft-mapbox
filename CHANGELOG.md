@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Added
+- Added support for [custom marker images](https://plugins.doublesecretagency.com/mapbox/guides/setting-marker-icons/#image-as-marker-icon). ([#9](https://github.com/doublesecretagency/craft-mapbox/issues/9))
 - Can now select which subfields will use autocomplete.
 - Addresses now include an optional [`name`](https://plugins.doublesecretagency.com/mapbox/models/address-model/#name) subfield. ([#4](https://github.com/doublesecretagency/craft-mapbox/issues/4))
 - Addresses now include an optional [`neighborhood`](https://plugins.doublesecretagency.com/mapbox/models/address-model/#neighborhood) subfield.

@@ -87,13 +87,13 @@ It's also possible to change the options of an existing marker. The [`changeMark
 
 :::code
 ```js
-map.changeMarker(markerId, options);
+map.changeMarker(markerId, markerOptions);
 ```
 ```twig
-{% do map.changeMarker(markerId, options) %}
+{% do map.changeMarker(markerId, markerOptions) %}
 ```
 ```php
-$map->changeMarker($markerId, $options);
+$map->changeMarker($markerId, $markerOptions);
 ```
 :::
 
@@ -139,4 +139,80 @@ To see the existing marker IDs (if you didn't manually specify them), do the fol
 2. View the JS console while the map is being rendered.
 
 In the JavaScript console, you should see a complete play-by-play of every map component being created. Simply copy & paste the marker ID's you need from there, or take note of the pattern for your own needs.
+:::
+
+## Image as Marker Icon
+
+When you need more control than just changing the marker's color, you can alternatively specify a **DOM element** to use as the marker icon. This can be done using the `element` option.
+
+Simply reference the `id` of an _existing_ DOM element...
+
+:::code
+```js
+const markerOptions = {
+    'element': '#custom-marker-icon',
+    'anchor': 'bottom'
+}
+```
+```twig
+{% set markerOptions = {
+    'element': '#custom-marker-icon',
+    'anchor': 'bottom'
+} %}
+```
+```php
+$markerOptions = [
+    'element' => '#custom-marker-icon',
+    'anchor' => 'bottom'
+];
+```
+:::
+
+:::tip Anchor
+You'll probably also need to specify the [`anchor` option](https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker-parameters). By default, Mapbox will try to align the _center_ of your icon with its corresponding coordinates.
+:::
+
+Your implementation may vary slightly depending on whether you are working with JavaScript or Twig/PHP.
+
+### Twig/PHP
+
+If you are working with Twig or PHP, the DOM element **must already exist** within the rendered HTML.
+
+You can simply reference the existing DOM element by its `id` attribute...
+
+```twig
+<div style="display:none">
+    <img id="custom-marker-icon" src="https://placekitten.com/g/60/60/">
+</div>
+
+{% set markerOptions = {
+    'element': '#custom-marker-icon',
+    'anchor': 'bottom'
+} %}
+```
+
+:::warning Element must exist, but can be hidden
+The specified element must exist in the DOM before the map is rendered.
+
+However, you can safely store it within a hidden (`display:none`) container.
+:::
+
+### JavaScript
+
+If you are working with JavaScript, you can alternatively create a DOM element on the fly.
+
+Use JavaScript to create a new dynamic DOM element, then pass in the entire `element`.
+
+:::code
+```js
+// Dynamically create an image element
+const img = document.createElement('img');
+img.src = 'https://placekitten.com/g/60/60/';
+
+// Use the new element as the marker icon
+const markerOptions = {
+    'element': img,
+    'anchor': 'bottom'
+}
+```
 :::

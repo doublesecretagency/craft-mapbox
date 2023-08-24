@@ -733,6 +733,39 @@ function DynamicMap(locations, options) {
             console.log(`[${this.id}] Adding marker "${markerId}"`);
         }
 
+        // If a DOM element is being used for the marker icon
+        if (options.markerOptions.element) {
+
+            // Get specified DOM element
+            let element = options.markerOptions.element;
+
+            // Optional info to be appended to a warning
+            let warnAppend = '';
+
+            // If the `id` of a DOM element was specified
+            if ('string' === typeof element) {
+                // Append specified `id` to warning
+                warnAppend = ` (${element})`;
+                // Remove the leading `#`
+                element = element.replace(/^#/, '');
+                // Get the actual DOM element
+                element = document.getElementById(element);
+            }
+
+            // If the DOM element is valid
+            if (element && 'object' === typeof element) {
+                // Clone the DOM element before using it
+                options.markerOptions.element = element.cloneNode(true);
+            } else {
+                // Otherwise, nullify element and anchor options
+                options.markerOptions.element = null;
+                options.markerOptions.anchor = null;
+                // Emit warning about invalid marker icon
+                console.warn(`[MB] Invalid custom marker icon.${warnAppend}`);
+            }
+
+        }
+
         // Initialize marker object
         this._markers[markerId] = new mapboxgl.Marker(options.markerOptions)
             .setLngLat([coords.lng, coords.lat])
