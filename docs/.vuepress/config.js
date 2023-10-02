@@ -64,6 +64,7 @@ module.exports = {
                         {text: 'Changing the Map Language', link: '/guides/changing-map-language/'},
                         {text: 'Prevent Zoom When Scrolling', link: '/guides/prevent-zoom-when-scrolling/'},
                         {text: 'Bermuda Triangle', link: '/guides/bermuda-triangle/'},
+                        {text: 'Converting from Google Maps', link: '/guides/converting-from-google-maps/'},
                     ] },
                 ]
             },
@@ -158,6 +159,7 @@ module.exports = {
                         'changing-map-language',
                         'prevent-zoom-when-scrolling',
                         'bermuda-triangle',
+                        'converting-from-google-maps',
                     ]
                 },
             ],

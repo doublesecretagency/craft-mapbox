@@ -121,7 +121,7 @@ class AddressField extends Field implements PreviewableFieldInterface
      */
     public static function displayName(): string
     {
-        return Craft::t('mapbox', 'Address');
+        return Craft::t('mapbox', 'Address (Mapbox)');
     }
 
     /**
