@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 - 2023-10-09
 
 ### Added
 - Added ability to [convert Address fields](https://plugins.doublesecretagency.com/mapbox/guides/converting-from-google-maps/) from the Google Maps plugin.
