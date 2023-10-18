@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.2 - 2023-10-18
 
 ### Changed
 - Marked Address field as compatible with the Google Maps plugin.
