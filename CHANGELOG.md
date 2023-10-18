@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.1 - 2023-10-18
 
 ### Added
 - Address fields can now be added to the search index.
