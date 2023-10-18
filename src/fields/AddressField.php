@@ -340,7 +340,7 @@ class AddressField extends Field implements PreviewableFieldInterface
         // Register assets
         $view->registerAssetBundle(AddressFieldAsset::class);
 
-        // Load fieldtype input template
+        // Load field type input template
         return $view->renderTemplate('mapbox/address', [
             'config' => [
                 'namespace' => [
@@ -370,7 +370,7 @@ class AddressField extends Field implements PreviewableFieldInterface
         // Register assets
         $view->registerAssetBundle(AddressFieldSettingsAsset::class);
 
-        // Load fieldtype settings template
+        // Load field type settings template
         return $view->renderTemplate('mapbox/address-settings', [
             'config' => [
                 'namespace' => [

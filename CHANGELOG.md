@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Changed
+- Marked Address field as compatible with the Google Maps plugin.
 - Now requires a minimum of Craft 4.5.7.
 
 ## 1.1.1 - 2023-10-18
