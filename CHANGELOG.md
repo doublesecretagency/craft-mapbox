@@ -4,6 +4,7 @@
 
 ### Added
 - Address fields can now be added to the search index.
+- Optionally use minified JavaScript files for dynamic maps on the front-end.
 
 ## 1.1.0 - 2023-10-09
 

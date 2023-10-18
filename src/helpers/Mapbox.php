@@ -14,6 +14,7 @@ namespace doublesecretagency\mapbox\helpers;
 use Craft;
 use craft\base\Element;
 use craft\web\View;
+use doublesecretagency\mapbox\MapboxPlugin;
 use doublesecretagency\mapbox\models\DynamicMap;
 use doublesecretagency\mapbox\models\Location;
 use yii\base\Exception;
@@ -49,12 +50,18 @@ class Mapbox
         $manager = Craft::$app->getAssetManager();
         $assets = '@doublesecretagency/mapbox/resources';
 
+        // Whether to use minified JavaScript files
+        $minifyJsFiles = (MapboxPlugin::$plugin->getSettings()->minifyJsFiles ?? false);
+
+        // Optionally use minified files
+        $min = ($minifyJsFiles ? 'min.' : '');
+
         // Link to API URL
         $files = [self::getApiUrl($service, $params)];
 
         // Append both JS files required by plugin
-        $files[] = $manager->getPublishedUrl($assets, true, 'js/mapbox.js');
-        $files[] = $manager->getPublishedUrl($assets, true, 'js/dynamicmap.js');
+        $files[] = $manager->getPublishedUrl($assets, true, "js/mapbox.{$min}js");
+        $files[] = $manager->getPublishedUrl($assets, true, "js/dynamicmap.{$min}js");
 
         // Return list of files
         return $files;

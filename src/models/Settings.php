@@ -31,6 +31,11 @@ class Settings extends Model
     public bool $enableJsLogging = true;
 
     /**
+     * @var bool Whether to use minified front-end JavaScript files. Only relevant when rendering a dynamic map.
+     */
+    public bool $minifyJsFiles = false;
+
+    /**
      * @var array Additional optional parameters for configuring Address fields.
      */
     public array $fieldParams = [];

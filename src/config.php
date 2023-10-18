@@ -19,8 +19,9 @@ return [
     // Mapbox Access Token (required)
     //'accessToken' => getenv('MAPBOX_ACCESSTOKEN'),
 
-    // Whether to log JS progress to the console (when a map is rendered)
+    // Manage JS resources (when rendering a dynamic map on the front-end)
     //'enableJsLogging' => true,
+    //'minifyJsFiles' => false,
 
     // Additional optional parameters for configuring Address fields
     //'fieldParams' => [
