@@ -18,6 +18,7 @@ use craft\models\FieldLayout;
 use doublesecretagency\mapbox\fields\AddressField;
 use doublesecretagency\mapbox\models\Address;
 use doublesecretagency\mapbox\models\Location;
+use Illuminate\Support\Collection;
 
 /**
  * Class MapHelper
@@ -49,11 +50,11 @@ class MapHelper
      * Coordinates will always be returned inside a parent array,
      * to compensate for Elements with multiple Address Fields.
      *
-     * @param array|Element|Location|null $locations
+     * @param array|Collection|Element|Location|null $locations
      * @param array $options
      * @return array Collection of coordinate sets
      */
-    public static function extractCoords(array|Element|Location|null $locations, array $options = []): array
+    public static function extractCoords(array|Collection|Element|Location|null $locations, array $options = []): array
     {
         // If no locations, return empty array
         if (!$locations) {
@@ -102,8 +103,15 @@ class MapHelper
             return [$locations];
         }
 
-        // Force array syntax
+        // If it's a Collection
+        if ($locations instanceof Collection) {
+            // Convert to an array
+            $locations = $locations->all();
+        }
+
+        // If still not an array
         if (!is_array($locations)) {
+            // Create single-item array
             $locations = [$locations];
         }
 

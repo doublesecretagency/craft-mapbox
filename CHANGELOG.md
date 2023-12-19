@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added support for [collections](https://craftcms.com/docs/4.x/element-queries.html#collect).
+
 ### Changed
 - Restores a required minimum of Craft 4.0.0.
 

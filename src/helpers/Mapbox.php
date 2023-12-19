@@ -17,6 +17,7 @@ use craft\web\View;
 use doublesecretagency\mapbox\MapboxPlugin;
 use doublesecretagency\mapbox\models\DynamicMap;
 use doublesecretagency\mapbox\models\Location;
+use Illuminate\Support\Collection;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 
@@ -102,11 +103,11 @@ class Mapbox
     /**
      * Create a new Dynamic Map object.
      *
-     * @param array|Element|Location|null $locations
+     * @param array|Collection|Element|Location|null $locations
      * @param array $options
      * @return DynamicMap
      */
-    public static function map(array|Element|Location|null $locations = [], array $options = []): DynamicMap
+    public static function map(array|Collection|Element|Location|null $locations = [], array $options = []): DynamicMap
     {
         // Create a new map object
         $map = new DynamicMap($locations, $options);

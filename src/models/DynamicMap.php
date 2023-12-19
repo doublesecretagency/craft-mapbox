@@ -24,6 +24,7 @@ use doublesecretagency\mapbox\fields\AddressField;
 use doublesecretagency\mapbox\MapboxPlugin;
 use doublesecretagency\mapbox\helpers\Mapbox;
 use doublesecretagency\mapbox\helpers\MapHelper;
+use Illuminate\Support\Collection;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -69,7 +70,7 @@ class DynamicMap extends Model
     /**
      * Initialize a Dynamic Map object.
      *
-     * @param array|Element|Location|null $locations
+     * @param array|Collection|Element|Location|null $locations
      * @param array $options
      * @param array $config
      * @throws Exception
@@ -77,7 +78,7 @@ class DynamicMap extends Model
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function __construct(array|Element|Location|null $locations = [], array $options = [], array $config = [])
+    public function __construct(array|Collection|Element|Location|null $locations = [], array $options = [], array $config = [])
     {
         // Call parent constructor
         parent::__construct($config);
@@ -115,7 +116,7 @@ class DynamicMap extends Model
     /**
      * Add one or more markers to the map.
      *
-     * @param array|Element|Location|null $locations
+     * @param array|Collection|Element|Location|null $locations
      * @param array $options
      * @return $this
      * @throws Exception
@@ -123,7 +124,7 @@ class DynamicMap extends Model
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function markers(array|Element|Location|null $locations, array $options = []): DynamicMap
+    public function markers(array|Collection|Element|Location|null $locations, array $options = []): DynamicMap
     {
         // If no locations were specified, bail
         if (!$locations) {
@@ -432,14 +433,14 @@ class DynamicMap extends Model
     /**
      * Create individual markers one at a time.
      *
-     * @param array|Element|Location $locations
+     * @param array|Collection|Element|Location $locations
      * @param array $options
      * @throws Exception
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    private function _individualMarkers(array|Element|Location $locations, array $options): void
+    private function _individualMarkers(array|Collection|Element|Location $locations, array $options): void
     {
         // Initialize popupOptions
         $options = $options ?? [];
@@ -504,11 +505,11 @@ class DynamicMap extends Model
     /**
      * Creates a single marker with a corresponding popup.
      *
-     * @param array|Element|Location $location
+     * @param array|Collection|Element|Location $location
      * @param array $options
      * @param bool $isCoords
      */
-    private function _markerPopup(array|Element|Location $location, array &$options, bool $isCoords): void
+    private function _markerPopup(array|Collection|Element|Location $location, array &$options, bool $isCoords): void
     {
         // Initialize marker data
         $popup = [
