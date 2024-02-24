@@ -30,6 +30,7 @@
                         <tr
                             :data-handle="element.handle"
                             :class="{'disabled': !element.enabled}"
+                            style="user-select:initial"
                         >
                             <td class="singleline-cell textual">
                                 <input
@@ -60,6 +61,7 @@
                                         v-model="element.enabled"
                                         :id="`enabled-${element.handle}`"
                                         class="checkbox"
+                                        style="pointer-events:initial; cursor:pointer;"
                                         value="1"
                                     ><label :for="`enabled-${element.handle}`"></label>
                                 </div>
@@ -88,7 +90,7 @@
                                     ><label :for="`required-${element.handle}`"></label>
                                 </div>
                             </td>
-                            <td class="thin action">
+                            <td class="thin action" style="pointer-events:initial">
                                 <a class="move icon" title="Reorder"></a>
                             </td>
                         </tr>

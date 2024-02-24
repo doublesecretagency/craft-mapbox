@@ -243,12 +243,12 @@ export const useAddressStore = defineStore('address', () => {
         this.activeSuggestion = null;
 
         // If not changing the map visibility, bail
-        if ('noChange' === settings.mapOnSearch) {
+        if ('noChange' === settings.value.mapOnSearch) {
             return;
         }
 
         // Change map visibility based on settings
-        settings.showMap = ('open' === settings.mapOnSearch);
+        settings.value.showMap = ('open' === settings.value.mapOnSearch);
     }
 
     /**

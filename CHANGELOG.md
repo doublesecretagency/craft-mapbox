@@ -7,6 +7,7 @@
 
 ### Fixed
 - Fixed minor popup issues.
+- Fixed showing map after searching.
 
 ## 1.1.3 - 2023-12-19
 
