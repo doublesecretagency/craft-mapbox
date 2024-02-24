@@ -137,12 +137,12 @@ function DynamicMap(locations, options) {
             var coords = locations[i];
 
             // If coordinates are not valid, skip
-            if (!coords.hasOwnProperty('lat') || !coords.hasOwnProperty('lng')) {
+            if (!coords.hasOwnProperty('lng') || !coords.hasOwnProperty('lat')) {
                 continue;
             }
 
             // Get marker ID or generate a random one
-            var markerId = options.id || coords.id || this._generateId('marker');
+            var markerId = coords.id || options.id || this._generateId('marker');
 
             // Set marker ID back to coordinates object
             coords.id = markerId;
@@ -783,7 +783,7 @@ function DynamicMap(locations, options) {
         const markerPopup = mapPopups[markerId] || null;
 
         // If no corresponding popup, bail
-        if (!markerPopup) {
+        if (!markerPopup || !markerPopup.content) {
             return;
         }
 

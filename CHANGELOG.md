@@ -5,6 +5,9 @@
 ### Changed
 - Craft 5 compatibility.
 
+### Fixed
+- Fixed minor popup issues.
+
 ## 1.1.3 - 2023-12-19
 
 ### Added
