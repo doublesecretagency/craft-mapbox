@@ -14,6 +14,7 @@ namespace doublesecretagency\mapbox\migrations;
 use Craft;
 use craft\db\Migration;
 use craft\i18n\Translation;
+use ReflectionClass;
 
 /**
  * m231009_212501_announcements_v1_1 Migration
@@ -50,12 +51,16 @@ class m231009_212501_announcements_v1_1 extends Migration
         return true;
     }
 
+    // ========================================================================= //
+
     /**
      * @inheritdoc
      */
     public function safeDown(): bool
     {
-        echo "m231009_212501_announcements_v1_1 cannot be reverted.\n";
+        // Get migration name
+        $migration = (new ReflectionClass($this))->getShortName();
+        echo "{$migration} cannot be reverted.\n";
         return false;
     }
 

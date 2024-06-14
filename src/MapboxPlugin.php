@@ -44,7 +44,7 @@ class MapboxPlugin extends Plugin
     /**
      * @var string Current schema version of the plugin.
      */
-    public string $schemaVersion = '1.1.0';
+    public string $schemaVersion = '1.2.0';
 
     /**
      * @var MapboxPlugin Self-referential plugin property.
@@ -191,7 +191,7 @@ class MapboxPlugin extends Plugin
 
                 // List of columns to copy between tables
                 $columns = [
-                    'elementId', 'fieldId',
+                    'elementId', 'siteId', 'fieldId',
                     'formatted', 'raw',
                     'name', 'street1', 'street2',
                     'city', 'state', 'zip',

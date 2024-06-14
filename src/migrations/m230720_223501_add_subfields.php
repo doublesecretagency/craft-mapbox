@@ -12,6 +12,7 @@
 namespace doublesecretagency\mapbox\migrations;
 
 use craft\db\Migration;
+use ReflectionClass;
 
 /**
  * m230720_223501_add_subfields Migration
@@ -25,39 +26,40 @@ class m230720_223501_add_subfields extends Migration
      */
     public function safeUp(): bool
     {
-        // Table of all Addresses
-        $table = '{{%mapbox_addresses}}';
-
         // If name column doesn't exist, add it
-        if (!$this->db->columnExists($table, 'name')) {
-            $this->addColumn($table, 'name', $this->string()->after('raw'));
+        if (!$this->db->columnExists(Install::MAPBOX_ADDRESSES, 'name')) {
+            $this->addColumn(Install::MAPBOX_ADDRESSES, 'name', $this->string()->after('raw'));
         }
 
         // If neighborhood column doesn't exist, add it
-        if (!$this->db->columnExists($table, 'neighborhood')) {
-            $this->addColumn($table, 'neighborhood', $this->string()->after('zip'));
+        if (!$this->db->columnExists(Install::MAPBOX_ADDRESSES, 'neighborhood')) {
+            $this->addColumn(Install::MAPBOX_ADDRESSES, 'neighborhood', $this->string()->after('zip'));
         }
 
         // If county column doesn't exist, add it
-        if (!$this->db->columnExists($table, 'county')) {
-            $this->addColumn($table, 'county', $this->string()->after('neighborhood'));
+        if (!$this->db->columnExists(Install::MAPBOX_ADDRESSES, 'county')) {
+            $this->addColumn(Install::MAPBOX_ADDRESSES, 'county', $this->string()->after('neighborhood'));
         }
 
         // If mapboxId column doesn't exist, add it
-        if (!$this->db->columnExists($table, 'mapboxId')) {
-            $this->addColumn($table, 'mapboxId', $this->text()->after('country'));
+        if (!$this->db->columnExists(Install::MAPBOX_ADDRESSES, 'mapboxId')) {
+            $this->addColumn(Install::MAPBOX_ADDRESSES, 'mapboxId', $this->text()->after('country'));
         }
 
         // Success
         return true;
     }
 
+    // ========================================================================= //
+
     /**
      * @inheritdoc
      */
     public function safeDown(): bool
     {
-        echo "m230720_223501_add_subfields cannot be reverted.\n";
+        // Get migration name
+        $migration = (new ReflectionClass($this))->getShortName();
+        echo "{$migration} cannot be reverted.\n";
         return false;
     }
 

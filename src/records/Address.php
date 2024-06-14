@@ -19,6 +19,7 @@ use craft\db\ActiveRecord;
  *
  * @property int $id ID of address.
  * @property int $elementId ID of element containing address.
+ * @property int $siteId ID of site containing address.
  * @property int $fieldId ID of field containing address.
  * @property string $formatted Properly formatted address according to the Mapbox API.
  * @property string $raw Complete raw JSON address info from Mapbox API.
