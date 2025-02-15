@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.1 - 2025-02-14
 
 ### Fixed
 - Fixed visual overlap of field handle and map toggle occurring in Craft 5.6+. ([#13](https://github.com/doublesecretagency/craft-mapbox/issues/13))
