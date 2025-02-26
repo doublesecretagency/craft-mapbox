@@ -107,9 +107,11 @@ class AddressField extends Field implements PreviewableFieldInterface
         'maki-lodging' => 'maki/lodging.svg',
         'maki-restaurant' => 'maki/restaurant.svg',
         'maki-bar' => 'maki/bar.svg',
+        'maki-bus' => 'maki/bus.svg',
         'maki-fuel' => 'maki/fuel.svg',
         'maki-cinema' => 'maki/cinema.svg',
         'maki-library' => 'maki/library.svg',
+        'maki-town-hall' => 'maki/town-hall.svg',
         'maki-marker' => 'maki/marker.svg',
         'maki-default' => 'maki/marker-stroked.svg',
     ];

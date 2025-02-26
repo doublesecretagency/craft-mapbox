@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added missing Maki icons.
+
 ## 2.0.1 - 2025-02-14
 
 ### Fixed
