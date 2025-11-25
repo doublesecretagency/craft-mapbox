@@ -5,6 +5,9 @@
 ### Added
 - Added missing Maki icons.
 
+### Fixed
+- Fixed hardcoding of env variable. ([#16](https://github.com/doublesecretagency/craft-mapbox/issues/16))
+
 ## 2.0.1 - 2025-02-14
 
 ### Fixed

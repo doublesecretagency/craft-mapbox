@@ -89,7 +89,7 @@ class Mapbox
         }
 
         // Get access token
-        $accessToken = getenv('MAPBOX_ACCESSTOKEN');
+        $accessToken = static::getAccessToken();
 
         // Load access token
         $view->registerJs("window.mapboxAccessToken='{$accessToken}'", View::POS_HEAD);
