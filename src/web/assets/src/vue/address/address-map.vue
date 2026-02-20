@@ -300,6 +300,9 @@ export default {
          */
         _updateMarkerPosition()
         {
+            // Prevent crashes if coordinates change but the map marker hasn't been initialized yet
+            if (!this.marker) return;
+            
             // Get the Pinia store
             const addressStore = useAddressStore()
 
@@ -329,6 +332,9 @@ export default {
          */
         _updateZoomLevel()
         {
+            // Prevent crashes if zoom level changes but the map instance hasn't been initialized yet
+            if (!this.map) return;
+            
             // Get the Pinia store
             const addressStore = useAddressStore();
 

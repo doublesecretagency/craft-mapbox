@@ -65,28 +65,10 @@ import { toRaw } from 'vue';
 
 export default {
     data() {
-        // If libraries have not yet been defined
-        if (!window.mapboxsearchcore) {
-            // Log error and bail
-            console.warn('[MB] Unable to load the Mapbox search libraries.');
-        }
-
-        // Extract search libraries
-        const {
-            SearchBoxCore,
-            SearchSession
-        } = window.mapboxsearchcore;
-
-        // Configure the search options
-        const options = this.configureOptions();
-
-        // Configure search session
-        const search = new SearchBoxCore(options);
-        const session = new SearchSession(search, 200); // Debounce 2 of 2
-
-        // Return data
+        // Return data with a null session initially.
+        // We will initialize the session in mounted() once the external Mapbox libraries are fully loaded.
         return {
-            'session': session,
+            'session': null,
             'resultsLeft': '0',
             'resultsWidth': '400px',
         }
@@ -102,7 +84,29 @@ export default {
         }
     },
     mounted() {
-        this.listeners();
+        // Asynchronously wait for the external Mapbox search libraries to be available
+        // This prevents race conditions when Matrix blocks are dynamically added in Craft 5
+        const initMapbox = () => {
+            if (!window.mapboxsearchcore || typeof window.mapboxsearchcore.SearchBoxCore === 'undefined') {
+                setTimeout(initMapbox, 100);
+                return;
+            }
+
+            // Extract search libraries
+            const { SearchBoxCore, SearchSession } = window.mapboxsearchcore;
+
+            // Configure the search options
+            const options = this.configureOptions();
+
+            // Configure search session and assign it to our component data
+            const search = new SearchBoxCore(options);
+            this.session = new SearchSession(search, 200); // Debounce 2 of 2
+
+            // Start the listeners only after the session has been successfully created
+            this.listeners();
+        };
+
+        initMapbox();
     },
     methods: {
 
@@ -282,6 +286,9 @@ export default {
          */
         search(searchValue)
         {
+            // Prevent errors if the user types before the Mapbox session is fully initialized
+            if (!this.session) return;
+            
             // Perform search
             toRaw(this.session).suggest(searchValue);
 
@@ -294,6 +301,9 @@ export default {
          */
         retrieve(suggestion)
         {
+            // Prevent errors if retrieval is triggered before the Mapbox session is fully initialized
+            if (!this.session) return;
+            
             // Retrieve suggestion info
             toRaw(this.session).retrieve(suggestion);
 
