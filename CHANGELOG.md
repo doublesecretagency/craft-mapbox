@@ -5,6 +5,9 @@
 ### Added
 - Added the full set of Maki icons to address suggestions.
 
+### Fixed
+- Fixed a bug where saving an empty Address field could throw an error.
+
 ## 2.0.2 - 2025-11-24
 
 ### Added
