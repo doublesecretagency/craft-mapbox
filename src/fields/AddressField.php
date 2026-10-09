@@ -103,17 +103,6 @@ class AddressField extends Field implements PreviewableFieldInterface
     private array $_icons = [
         'iconOn' => 'marker.svg',
         'iconOff' => 'marker-hollow.svg',
-        // https://github.com/mapbox/maki/tree/main/icons
-        'maki-lodging' => 'maki/lodging.svg',
-        'maki-restaurant' => 'maki/restaurant.svg',
-        'maki-bar' => 'maki/bar.svg',
-        'maki-bus' => 'maki/bus.svg',
-        'maki-fuel' => 'maki/fuel.svg',
-        'maki-cinema' => 'maki/cinema.svg',
-        'maki-library' => 'maki/library.svg',
-        'maki-town-hall' => 'maki/town-hall.svg',
-        'maki-marker' => 'maki/marker.svg',
-        'maki-default' => 'maki/marker-stroked.svg',
     ];
 
     // ========================================================================= //
@@ -339,6 +328,12 @@ class AddressField extends Field implements PreviewableFieldInterface
         $accessToken = Mapbox::getAccessToken();
         $view->registerJs("window.mapboxAccessToken='{$accessToken}';", View::POS_HEAD);
 
+        // Whether dev mode is enabled
+        $devMode = (Craft::$app->getConfig()->getGeneral()->devMode ? 'true' : 'false');
+
+        // Pass dev mode through to JavaScript
+        $view->registerJs("window.mapboxDevMode={$devMode};", View::POS_HEAD);
+
         // Register assets
         $view->registerAssetBundle(AddressFieldAsset::class);
 
@@ -368,6 +363,12 @@ class AddressField extends Field implements PreviewableFieldInterface
         // Pass access token through to JavaScript
         $accessToken = Mapbox::getAccessToken();
         $view->registerJs("window.mapboxAccessToken='{$accessToken}';", View::POS_HEAD);
+
+        // Whether dev mode is enabled
+        $devMode = (Craft::$app->getConfig()->getGeneral()->devMode ? 'true' : 'false');
+
+        // Pass dev mode through to JavaScript
+        $view->registerJs("window.mapboxDevMode={$devMode};", View::POS_HEAD);
 
         // Register assets
         $view->registerAssetBundle(AddressFieldSettingsAsset::class);
@@ -616,6 +617,10 @@ class AddressField extends Field implements PreviewableFieldInterface
         array_walk($images, function (&$value) use ($assetManager, $directory) {
             $value = $assetManager->getPublishedUrl($directory, true, "images/{$value}");
         });
+
+        // Add the folder of Maki icons, without any cache-busting params
+        // https://github.com/mapbox/maki/tree/main/icons
+        $images['maki'] = $assetManager->getPublishedUrl($directory, true).'/images/maki';
 
         // Return published images
         return $images;

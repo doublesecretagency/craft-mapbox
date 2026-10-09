@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added the full set of Maki icons to address suggestions.
+
 ## 2.0.2 - 2025-11-24
 
 ### Added

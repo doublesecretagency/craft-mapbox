@@ -36,8 +36,9 @@
                 >
                     <div class="suggestion-icon">
                         <img
-                            :src="makiSrc(suggestion.maki || 'default')"
+                            :src="makiSrc(suggestion.maki || 'marker-stroked')"
                             :alt="makiAlt(suggestion.maki || 'default')"
+                            @error="makiFallback($event, suggestion.maki)"
                         >
                     </div>
                     <div class="suggestion-text">
@@ -523,7 +524,29 @@ export default {
             const addressStore = useAddressStore();
 
             // Return the icon URL
-            return addressStore.images[`maki-${icon}`] || `#${icon}`;
+            return `${addressStore.images.maki}/${icon}.svg`;
+        },
+
+        /**
+         * Fall back to the default Maki icon.
+         */
+        makiFallback(e, icon)
+        {
+            // Get the default icon URL
+            const fallback = this.makiSrc('marker-stroked');
+
+            // If the default icon already failed, bail
+            if (e.target.src.endsWith('/marker-stroked.svg')) {
+                return;
+            }
+
+            // If dev mode is enabled, log the missing icon
+            if (window.mapboxDevMode) {
+                console.warn(`[MB] Missing Maki icon: ${icon}`);
+            }
+
+            // Swap in the default icon
+            e.target.src = fallback;
         },
 
         /**

@@ -18761,7 +18761,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
 
       // Return the icon URL
-      return addressStore.images["maki-".concat(icon)] || "#".concat(icon);
+      return "".concat(addressStore.images.maki, "/").concat(icon, ".svg");
+    },
+    /**
+     * Fall back to the default Maki icon.
+     */
+    makiFallback: function makiFallback(e, icon) {
+      // Get the default icon URL
+      var fallback = this.makiSrc('marker-stroked');
+
+      // If the default icon already failed, bail
+      if (e.target.src.endsWith('/marker-stroked.svg')) {
+        return;
+      }
+
+      // If dev mode is enabled, log the missing icon
+      if (window.mapboxDevMode) {
+        console.warn("[MB] Missing Maki icon: ".concat(icon));
+      }
+
+      // Swap in the default icon
+      e.target.src = fallback;
     },
     /**
      * Get alt of the Maki icon.
@@ -19074,7 +19094,7 @@ var _hoisted_3 = ["onClick"];
 var _hoisted_4 = {
   "class": "suggestion-icon"
 };
-var _hoisted_5 = ["src", "alt"];
+var _hoisted_5 = ["src", "alt", "onError"];
 var _hoisted_6 = {
   "class": "suggestion-text"
 };
@@ -19131,9 +19151,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: i,
       tabindex: "-1"
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-      src: $options.makiSrc(suggestion.maki || 'default'),
-      alt: $options.makiAlt(suggestion.maki || 'default')
-    }, null, 8 /* PROPS */, _hoisted_5)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(suggestion.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(suggestion.place_formatted), 1 /* TEXT */)])], 10 /* CLASS, PROPS */, _hoisted_3);
+      src: $options.makiSrc(suggestion.maki || 'marker-stroked'),
+      alt: $options.makiAlt(suggestion.maki || 'default'),
+      onError: function onError($event) {
+        return $options.makiFallback($event, suggestion.maki);
+      }
+    }, null, 40 /* PROPS, HYDRATE_EVENTS */, _hoisted_5)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(suggestion.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(suggestion.place_formatted), 1 /* TEXT */)])], 10 /* CLASS, PROPS */, _hoisted_3);
   }), 128 /* KEYED_FRAGMENT */))]), _hoisted_9], 4 /* STYLE */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $options.showResults]])]);
 }
 

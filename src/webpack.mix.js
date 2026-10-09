@@ -35,6 +35,9 @@ mix
     // Copy Sortable JS into plugin's assets folder
     .copy('node_modules/sortablejs/Sortable.min.js', `${dist}/js`)
 
+    // Copy every Maki icon into plugin's assets folder
+    .copyDirectory('node_modules/@mapbox/maki/icons', `${dist}/images/maki`)
+
     // Disable build notifications
     .disableNotifications()
 ;
