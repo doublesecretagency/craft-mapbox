@@ -52,6 +52,7 @@ module.exports = {
                 items: [
                     { text: 'Address Field', items: [
                         {text: 'Address in a Matrix Field', link: '/guides/address-in-a-matrix-field/'},
+                        {text: 'Importing Addresses', link: '/guides/importing-addresses/'},
                     ] },
                     { text: 'Dynamic Maps', items: [
                         {text: 'Troubleshoot Dynamic Maps', link: '/guides/troubleshoot-dynamic-maps/'},
@@ -143,6 +144,7 @@ module.exports = {
                     collapsable: false,
                     children: [
                         'address-in-a-matrix-field',
+                        'importing-addresses',
                     ]
                 },
                 {
