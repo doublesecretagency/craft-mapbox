@@ -156,18 +156,34 @@ class MapboxFacadeTest extends TestCase
         $this->assertSame('pk.test', ApiHelper::setAccessToken('pk.test'));
     }
 
-    public function testAssetsAreTheApiThenBothPluginScripts(): void
+    public function testAssetsAreTheApiThenTheBundledScripts(): void
     {
         $this->assertMatchesRegularExpression(
-            '/\$files = \[self::getApiUrl\(\$service, \$params\)\];[\s\S]*?js\/mapbox\.\{\$min\}js[\s\S]*?js\/dynamicmap\.\{\$min\}js/',
+            '/\$files = \[self::getApiUrl\(\$service, \$params\)\];[\s\S]*?getBundle\(DynamicMapAsset::class\)[\s\S]*?getAssetUrl\(\$bundle, \$file\)/',
             $this->source
         );
     }
 
-    public function testLoadAssetsPutsScriptsAndTheTokenInTheHead(): void
+    /**
+     * Cloud only uploads folders a bundle declares, so the map scripts must
+     * come from a bundle, never from a hand-built published URL.
+     */
+    public function testAssetsAreNotPublishedByHand(): void
     {
-        $this->assertStringContainsString("registerJsFile(\$file, ['position' => View::POS_HEAD])", $this->source);
-        $this->assertStringContainsString("registerJs(\"window.mapboxAccessToken='{\$accessToken}'\", View::POS_HEAD)", $this->source);
+        $this->assertStringNotContainsString('getPublishedUrl(', $this->source);
+    }
+
+    public function testLoadAssetsRegistersTheApiThenTheBundleThenTheToken(): void
+    {
+        $api = strpos($this->source, "registerJsFile(static::getApiUrl(\$service, \$params), ['position' => View::POS_HEAD])");
+        $bundle = strpos($this->source, 'registerAssetBundle(DynamicMapAsset::class)');
+        $token = strpos($this->source, "registerJs(\"window.mapboxAccessToken='{\$accessToken}'\", View::POS_HEAD)");
+
+        $this->assertNotFalse($api);
+        $this->assertNotFalse($bundle);
+        $this->assertNotFalse($token);
+        $this->assertLessThan($bundle, $api);
+        $this->assertLessThan($token, $bundle);
     }
 
     public function testTheTokenIsParsedForEnvironmentVariables(): void

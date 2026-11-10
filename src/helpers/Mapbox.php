@@ -14,9 +14,9 @@ namespace doublesecretagency\mapbox\helpers;
 use Craft;
 use craft\base\Element;
 use craft\web\View;
-use doublesecretagency\mapbox\MapboxPlugin;
 use doublesecretagency\mapbox\models\DynamicMap;
 use doublesecretagency\mapbox\models\Location;
+use doublesecretagency\mapbox\web\assets\DynamicMapAsset;
 use Illuminate\Support\Collection;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
@@ -47,22 +47,20 @@ class Mapbox
      */
     public static function getAssets(string $service, array $params = []): array
     {
-        // Get asset manager
-        $manager = Craft::$app->getAssetManager();
-        $assets = '@doublesecretagency/mapbox/resources';
-
-        // Whether to use minified JavaScript files
-        $minifyJsFiles = (MapboxPlugin::$plugin->getSettings()->minifyJsFiles ?? false);
-
-        // Optionally use minified files
-        $min = ($minifyJsFiles ? 'min.' : '');
-
         // Link to API URL
         $files = [self::getApiUrl($service, $params)];
 
-        // Append both JS files required by plugin
-        $files[] = $manager->getPublishedUrl($assets, true, "js/mapbox.{$min}js");
-        $files[] = $manager->getPublishedUrl($assets, true, "js/dynamicmap.{$min}js");
+        // Get asset manager
+        $manager = Craft::$app->getAssetManager();
+
+        // Get the bundle of plugin JavaScript
+        $bundle = $manager->getBundle(DynamicMapAsset::class);
+
+        // Loop through each JS file in the bundle
+        foreach ($bundle->js as $file) {
+            // Append the published URL
+            $files[] = $manager->getAssetUrl($bundle, $file);
+        }
 
         // Return list of files
         return $files;
@@ -80,13 +78,11 @@ class Mapbox
         // Get view service
         $view = Craft::$app->getView();
 
-        // Get all required assets
-        $assets = static::getAssets($service, $params);
+        // Load the Mapbox API (outside the bundle, since its URL varies by service and params)
+        $view->registerJsFile(static::getApiUrl($service, $params), ['position' => View::POS_HEAD]);
 
-        // Load each JS file
-        foreach ($assets as $file) {
-            $view->registerJsFile($file, ['position' => View::POS_HEAD]);
-        }
+        // Load the plugin's own JavaScript
+        $view->registerAssetBundle(DynamicMapAsset::class);
 
         // Get access token
         $accessToken = static::getAccessToken();

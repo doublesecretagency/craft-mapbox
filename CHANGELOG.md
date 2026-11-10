@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Dynamic map JavaScript now loads through an asset bundle, as recommended for Craft Cloud.
+
+### Fixed
+- Fixed compatibility issue with Craft Cloud.
+
 ## 2.1.0 - 2026-10-09
 
 ### Added

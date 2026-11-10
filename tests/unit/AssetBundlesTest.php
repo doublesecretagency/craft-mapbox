@@ -15,16 +15,16 @@ use PHPUnit\Framework\TestCase;
  * CSS and the API helper's JS URL). They must always name the same version, or
  * the CSS and JS drift apart.
  *
- * 🛑 Not covered yet: `JsApiAsset` reading `MapboxPlugin::$plugin` unguarded,
- * which crashes Craft Cloud's build (findings #1). Its regression test lands
- * with that fix. Every bundle here is read as source, never constructed,
- * partly for that reason.
+ * No bundle may read `MapboxPlugin::$plugin` directly. Craft Cloud builds
+ * every bundle with no plugin instance, and one fatal there silently drops the
+ * bundle's folder from the deploy (findings #1).
  */
 class AssetBundlesTest extends TestCase
 {
     private const BUNDLES = [
         'AddressFieldAsset',
         'AddressFieldSettingsAsset',
+        'DynamicMapAsset',
         'JsApiAsset',
         'MapboxAsset',
     ];
@@ -121,8 +121,8 @@ class AssetBundlesTest extends TestCase
     {
         $path = static::_sourcePath($bundle);
 
-        // MapboxAsset loads only from the CDN
-        if ('MapboxAsset' === $bundle) {
+        // MapboxAsset loads only from the CDN, and JsApiAsset only declares dependencies
+        if (in_array($bundle, ['MapboxAsset', 'JsApiAsset'], true)) {
             $this->assertNull($path);
             return;
         }
@@ -172,14 +172,74 @@ class AssetBundlesTest extends TestCase
         $this->assertStringContainsString('AddressFieldAsset::class', static::_source('AddressFieldSettingsAsset'));
     }
 
-    public function testTheMapScriptsDependOnTheMapboxLibrary(): void
-    {
-        $this->assertStringContainsString('MapboxAsset::class', static::_source('JsApiAsset'));
-    }
-
     public function testTheMapboxLibraryLoadsInTheHead(): void
     {
         $this->assertStringContainsString("'position' => View::POS_HEAD", static::_source('MapboxAsset'));
+    }
+
+    // ========================================================================= //
+    // Craft Cloud (findings #1)
+    // ========================================================================= //
+
+    /**
+     * @dataProvider bundleProvider
+     */
+    public function testNoBundleReadsThePluginInstanceDirectly(string $bundle): void
+    {
+        $this->assertStringNotContainsString(
+            'MapboxPlugin::$plugin',
+            static::_source($bundle),
+            "{$bundle} reads the typed static, which fatals during a Craft Cloud build."
+        );
+    }
+
+    public function testDynamicMapBundleReadsSettingsSafely(): void
+    {
+        $this->assertStringContainsString(
+            '(MapboxPlugin::getInstance()?->getSettings()->minifyJsFiles ?? false)',
+            static::_source('DynamicMapAsset')
+        );
+    }
+
+    public function testDynamicMapBundleDeclaresTheResourcesFolder(): void
+    {
+        $this->assertSame(static::_root() . '/src/resources', static::_sourcePath('DynamicMapAsset'));
+    }
+
+    public function testDynamicMapBundleListsBothScripts(): void
+    {
+        $this->assertSame(
+            ['js/mapbox.js', 'js/mapbox.min.js', 'js/dynamicmap.js', 'js/dynamicmap.min.js'],
+            static::_localFiles('DynamicMapAsset')
+        );
+    }
+
+    public function testDynamicMapBundleLoadsInTheHeadWithoutDefer(): void
+    {
+        // Inline user code expects `mapbox` to exist as soon as the head has run
+        $source = static::_source('DynamicMapAsset');
+
+        $this->assertStringContainsString("'position' => View::POS_HEAD", $source);
+        $this->assertStringNotContainsString("'defer'", $source);
+    }
+
+    public function testTheResourcesFolderIsDeclaredByExactlyOneBundle(): void
+    {
+        $declaring = array_values(array_filter(
+            static::BUNDLES,
+            static fn(string $b): bool => static::_sourcePath($b) === static::_root() . '/src/resources'
+        ));
+
+        $this->assertSame(['DynamicMapAsset'], $declaring);
+    }
+
+    public function testJsApiAssetStillLoadsTheApiAndTheMapScripts(): void
+    {
+        // Kept for any site registering it directly
+        $source = static::_source('JsApiAsset');
+
+        $this->assertStringContainsString('MapboxAsset::class', $source);
+        $this->assertStringContainsString('DynamicMapAsset::class', $source);
     }
 
     // ========================================================================= //

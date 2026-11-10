@@ -12,7 +12,6 @@
 namespace doublesecretagency\mapbox\web\assets;
 
 use craft\web\AssetBundle;
-use doublesecretagency\mapbox\MapboxPlugin;
 
 /**
  * Class JsApiAsset
@@ -28,21 +27,10 @@ class JsApiAsset extends AssetBundle
     {
         parent::init();
 
-        $this->sourcePath = '@doublesecretagency/mapbox/resources';
+        // Load the Mapbox API, then the plugin's own JavaScript
         $this->depends = [
             MapboxAsset::class,
-        ];
-
-        // Whether to use minified JavaScript files
-        $minifyJsFiles = (MapboxPlugin::$plugin->getSettings()->minifyJsFiles ?? false);
-
-        // Optionally use minified files
-        $min = ($minifyJsFiles ? 'min.' : '');
-
-        // Load JS files
-        $this->js = [
-            "js/mapbox.{$min}js",
-            "js/dynamicmap.{$min}js",
+            DynamicMapAsset::class,
         ];
     }
 

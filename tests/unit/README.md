@@ -105,12 +105,9 @@ For all of those, exercise the flow in the sandbox.
 
 ## Known gaps
 
-Two open bugs are deliberately not asserted yet. Each gets its regression test
-in the same change that fixes it, so the suite never starts red and never locks
-a bug in.
+One open bug is deliberately not asserted yet. It gets its regression test in
+the same change that fixes it, so the suite never starts red and never locks a
+bug in.
 
 - **`Location::getDistance()` always returns 0** (findings #3). The earth radius
   is hardcoded to zero. `LocationModelTest` covers only the null paths.
-- **`JsApiAsset` reads `MapboxPlugin::$plugin` unguarded** (findings #1), which
-  crashes Craft Cloud's build. `AssetBundlesTest` reads every bundle as source
-  and never constructs one.
