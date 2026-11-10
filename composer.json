@@ -31,14 +31,25 @@
     "require": {
         "craftcms/cms": "^5.0.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
     "autoload": {
         "psr-4": {
             "doublesecretagency\\mapbox\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "doublesecretagency\\mapbox\\tests\\": "tests/"
         }
     },
     "extra": {
         "name": "Mapbox",
         "handle": "mapbox",
         "class": "doublesecretagency\\mapbox\\MapboxPlugin"
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
