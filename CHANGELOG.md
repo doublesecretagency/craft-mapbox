@@ -9,6 +9,7 @@
 - Fixed compatibility issue with Craft Cloud.
 - Fixed a bug where [`getDistance()`](https://plugins.doublesecretagency.com/mapbox/models/location-model/#getdistance-location-units-miles) always returned 0.
 - Fixed `getDistance()` measuring to 0,0 when the target location has no coordinates.
+- Fixed the welcome screen icon on Craft Cloud.
 
 ## 2.1.0 - 2026-10-09
 

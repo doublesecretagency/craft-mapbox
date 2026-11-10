@@ -173,4 +173,37 @@ class FieldTemplatesTest extends TestCase
         // A site template can't see `mapbox/...`, so the error renders in CP mode.
         $this->assertStringContainsString('View::TEMPLATE_MODE_CP', $this->_src('models/DynamicMap.php'));
     }
+
+    // ========================================================================= //
+    // Welcome icon on Craft Cloud
+    // ========================================================================= //
+
+    /**
+     * Cloud only serves folders an asset bundle declares, and none declares
+     * `src/`, so a published `icon.svg` URL 404s there. The icon is inlined.
+     */
+    public function testWelcomeIconIsInlinedRatherThanPublished(): void
+    {
+        $twig = $this->_template('settings.twig');
+
+        $this->assertStringContainsString("svg('@doublesecretagency/mapbox/icon.svg', namespace=true)", $twig);
+        $this->assertStringNotContainsString('icon.svg\', true)', $twig);
+    }
+
+    public function testNoTemplatePublishesTheIconAtRuntime(): void
+    {
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/src/templates'));
+
+        foreach ($iterator as $file) {
+            if (!str_ends_with($file->getFilename(), '.twig')) {
+                continue;
+            }
+            $this->assertDoesNotMatchRegularExpression(
+                "/getPublishedUrl\\([^)]*icon\\.svg/",
+                file_get_contents($file->getPathname()),
+                $file->getFilename() . ' publishes icon.svg at runtime, which 404s on Craft Cloud.'
+            );
+        }
+    }
+
 }
