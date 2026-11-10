@@ -184,6 +184,15 @@ class AddressModelTest extends TestCase
         $this->assertNull((new Address(['lng' => 1.0, 'lat' => 2.0]))->getDistance());
     }
 
+    public function testGetDistanceWithATargetComputesTheRealDistance(): void
+    {
+        // A stored distance only answers when no target is given
+        $address = new Address(['lng' => -118.2437, 'lat' => 34.0522, 'distance' => 12.5]);
+        $distance = $address->getDistance(['lng' => -74.0060, 'lat' => 40.7128]);
+
+        $this->assertEqualsWithDelta(2445.7101588447485, $distance, 0.0001);
+    }
+
     public function testGetElementWithoutAnElementIdIsNull(): void
     {
         $this->assertNull((new Address())->getElement());

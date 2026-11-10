@@ -102,12 +102,3 @@ tree. The recipe is in `~/.claude/instructions/plugin-tests.md`.
   it hydrated.
 
 For all of those, exercise the flow in the sandbox.
-
-## Known gaps
-
-One open bug is deliberately not asserted yet. It gets its regression test in
-the same change that fixes it, so the suite never starts red and never locks a
-bug in.
-
-- **`Location::getDistance()` always returns 0** (findings #3). The earth radius
-  is hardcoded to zero. `LocationModelTest` covers only the null paths.

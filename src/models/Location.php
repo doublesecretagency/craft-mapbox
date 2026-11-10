@@ -124,6 +124,11 @@ class Location extends Model
             return null;
         }
 
+        // If the Location Model has no coordinates, bail
+        if (!$location->hasCoords()) {
+            return null;
+        }
+
         // Return coordinates of the Location Model
         return $location->getCoords();
     }
@@ -136,11 +141,10 @@ class Location extends Model
      * @param string $units
      * @return float Distance between two points as calculated by the haversine formula.
      */
-    private function _haversinePhp(array $pointA, array $pointB, string $units = 'mi'): float
+    private function _haversinePhp(array $pointA, array $pointB, string $units = 'miles'): float
     {
         // Determine radius
-//        $radius = ProximitySearchHelper::haversineRadius($units);
-        $radius = 0;
+        $radius = $this->_haversineRadius($units);
 
         // Set coordinates
         $latA = (float) $pointA['lat'];
@@ -148,16 +152,30 @@ class Location extends Model
         $latB = (float) $pointB['lat'];
         $lngB = (float) $pointB['lng'];
 
-        // Calculate haversine formula
+        // Calculate haversine formula, clamped so rounding can't push acos out of range
         return (
-            $radius * acos(
+            $radius * acos(max(-1, min(1,
                 cos(deg2rad($latA)) *
                 cos(deg2rad($latB)) *
                 cos(deg2rad($lngB) - deg2rad($lngA)) +
                 sin(deg2rad($latA)) *
                 sin(deg2rad($latB))
-            )
+            )))
         );
+    }
+
+    /**
+     * Get the radius of the earth in the specified units.
+     *
+     * @param string $units
+     * @return int Radius of the earth.
+     */
+    private function _haversineRadius(string $units): int
+    {
+        return match ($units) {
+            'km', 'kilometers' => 6371,
+            default => 3959, // miles
+        };
     }
 
 }
