@@ -18440,6 +18440,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             lat: parseFloat(startingPosition.lat)
           };
 
+          // If an address was chosen while the map was loading
+          if (addressStore.validateCoords(addressStore.data.coords)) {
+            // Start from the chosen address
+            startingPosition = addressStore.data.coords;
+            // Center the map on it
+            mapCenter = {
+              lng: parseFloat(startingPosition.lng),
+              lat: parseFloat(startingPosition.lat)
+            };
+          }
+
           // Set map options
           var mapOptions = {
             'accessToken': window.mapboxAccessToken,
@@ -18602,6 +18613,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Update the marker position.
      */
     _updateMarkerPosition: function _updateMarkerPosition() {
+      // If the map isn't ready yet, bail
+      if (!this.marker) {
+        return;
+      }
+
       // Get the Pinia store
       var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
 
@@ -18629,6 +18645,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Update the zoom level.
      */
     _updateZoomLevel: function _updateZoomLevel() {
+      // If the map isn't ready yet, bail
+      if (!this.map) {
+        return;
+      }
+
       // Get the Pinia store
       var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
 

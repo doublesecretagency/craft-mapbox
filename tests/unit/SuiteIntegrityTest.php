@@ -178,6 +178,7 @@ class SuiteIntegrityTest extends TestCase
             'AddressContractParityTest.php',
             'AddressFieldNormalizationTest.php',
             'AddressFieldShapeTest.php',
+            'AddressFieldStartupTest.php',
             'AddressModelTest.php',
             'AssetBundlesTest.php',
             'ControlPanelSurfaceTest.php',

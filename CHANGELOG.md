@@ -10,6 +10,8 @@
 - Fixed a bug where [`getDistance()`](https://plugins.doublesecretagency.com/mapbox/models/location-model/#getdistance-location-units-miles) always returned 0.
 - Fixed `getDistance()` measuring to 0,0 when the target location has no coordinates.
 - Fixed the welcome screen icon on Craft Cloud.
+- Fixed Address fields failing to load in slideouts and new Matrix blocks on Craft versions prior to 5.10. ([#15](https://github.com/doublesecretagency/craft-mapbox/issues/15), [#17](https://github.com/doublesecretagency/craft-mapbox/pull/17))
+- Fixed an error when an address was chosen before the Address field's map had finished loading.
 
 ## 2.1.0 - 2026-10-09
 
