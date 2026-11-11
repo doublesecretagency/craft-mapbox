@@ -15,18 +15,23 @@ use Craft;
 use craft\base\Field;
 use craft\base\Model;
 use craft\base\Plugin;
+use craft\db\Query;
+use craft\db\Table;
 use craft\events\ConfigEvent;
 use craft\events\DefineCompatibleFieldTypesEvent;
 use craft\events\ModelEvent;
 use craft\events\PluginEvent;
 use craft\events\RegisterComponentTypesEvent;
+use craft\helpers\Db;
 use craft\helpers\UrlHelper;
 use craft\services\Fields;
 use craft\services\Plugins;
 use craft\services\ProjectConfig;
 use doublesecretagency\mapbox\fields\AddressField;
+use doublesecretagency\mapbox\migrations\Install;
 use doublesecretagency\mapbox\models\Settings;
 use doublesecretagency\mapbox\web\twig\Extension;
+use Throwable;
 use yii\base\Event;
 
 /**
@@ -189,39 +194,117 @@ class MapboxPlugin extends Plugin
                     return;
                 }
 
-                // List of columns to copy between tables
-                $columns = [
-                    'elementId', 'siteId', 'fieldId',
-                    'formatted', 'raw',
-                    'name', 'street1', 'street2',
-                    'city', 'state', 'zip',
-                    'county', 'country',
-                    'lng', 'lat', 'zoom',
-                    'dateCreated', 'dateUpdated', 'uid'
-                ];
-
-                // Merge and escape column names
-                $columns = '[['.implode(']],[[', $columns).']]';
-
-                // Copy field's rows from `googlemaps_addresses` into `mapbox_addresses`
-                $sql = "
-INSERT INTO [[mapbox_addresses]] ({$columns})
-SELECT {$columns}
-FROM [[googlemaps_addresses]]
-WHERE [[fieldId]] = :fieldId
-  AND NOT EXISTS (
-    SELECT 1
-    FROM [[mapbox_addresses]]
-    WHERE [[mapbox_addresses]].[[uid]] = [[googlemaps_addresses]].[[uid]]
-)";
-
-                // Execute the SQL statement
-                \Yii::$app->db->createCommand($sql)
-                    ->bindValues([':fieldId' => $field->id])
-                    ->execute();
+                // Copy the field's Addresses from Google Maps
+                self::_copyGoogleMapsAddresses((int) $field->id);
 
             }
         );
+    }
+
+    /**
+     * Copy a converted field's Addresses from Google Maps into Mapbox.
+     *
+     * Runs once, when the field type changes, so it copies all or nothing.
+     *
+     * @param int $fieldId
+     * @throws Throwable
+     */
+    private static function _copyGoogleMapsAddresses(int $fieldId): void
+    {
+        // Get the database connection
+        $db = Craft::$app->getDb();
+
+        // List of columns to copy between tables
+        $columns = [
+            'elementId', 'fieldId',
+            'formatted', 'raw',
+            'name', 'street1', 'street2',
+            'city', 'state', 'zip',
+            'county', 'country',
+            'lng', 'lat', 'zoom',
+            'dateCreated', 'dateUpdated',
+        ];
+
+        // Newer versions of Google Maps also store a neighborhood
+        if ($db->columnExists('{{%googlemaps_addresses}}', 'neighborhood')) {
+            $columns[] = 'neighborhood';
+        }
+
+        // Google Maps 4.6+ and 5.1+ store a site for each Address
+        $hasSites = $db->columnExists('{{%googlemaps_addresses}}', 'siteId');
+
+        // Get the primary site ID
+        $primarySiteId = (int) Craft::$app->getSites()->getPrimarySite()->id;
+
+        // Get this field's Google Maps Addresses
+        $addresses = (new Query())
+            ->select($hasSites ? [...$columns, 'siteId'] : $columns)
+            ->from('{{%googlemaps_addresses}}')
+            ->where(['fieldId' => $fieldId])
+            ->orderBy(['id' => SORT_ASC]);
+
+        // Copy everything, or nothing
+        $db->transaction(static function () use ($db, $addresses, $columns, $fieldId, $primarySiteId) {
+
+            // Get each element and site which already has a Mapbox Address
+            $taken = [];
+            foreach ((new Query())->select(['elementId', 'siteId'])->from(Install::MAPBOX_ADDRESSES)->where(['fieldId' => $fieldId])->all($db) as $row) {
+                $taken["{$row['elementId']}:{$row['siteId']}"] = true;
+            }
+
+            // Loop over each batch of Addresses
+            foreach (Db::batch($addresses) as $batch) {
+
+                // Get the sites of each element in this batch
+                $elementSites = [];
+                $siteRows = (new Query())
+                    ->select(['elementId', 'siteId'])
+                    ->from(Table::ELEMENTS_SITES)
+                    ->where(['elementId' => array_column($batch, 'elementId')])
+                    ->all($db);
+                foreach ($siteRows as $row) {
+                    $elementSites[(int) $row['elementId']][] = (int) $row['siteId'];
+                }
+
+                // Compile the new rows
+                $rows = [];
+                foreach ($batch as $address) {
+
+                    // Get the sites of its element, or else the primary site
+                    $elementId = (int) $address['elementId'];
+                    $siteIds = ($elementSites[$elementId] ?? [$primarySiteId]);
+
+                    // If the Address has its own site, copy to that site only (if the element exists there)
+                    if ($address['siteId'] ?? null) {
+                        $siteIds = array_intersect($siteIds, [(int) $address['siteId']]);
+                    }
+
+                    // Loop over each site
+                    foreach ($siteIds as $siteId) {
+
+                        // If this site already has an Address, skip
+                        if (isset($taken["{$elementId}:{$siteId}"])) {
+                            continue;
+                        }
+
+                        // Mark the site as taken
+                        $taken["{$elementId}:{$siteId}"] = true;
+
+                        // Add the row, with its own site (Craft adds the UID)
+                        $values = array_map(static fn(string $column) => $address[$column], $columns);
+                        $rows[] = [...$values, $siteId];
+
+                    }
+                }
+
+                // Insert the batch
+                if ($rows) {
+                    Db::batchInsert(Install::MAPBOX_ADDRESSES, [...$columns, 'siteId'], $rows, $db);
+                }
+
+            }
+
+        });
     }
 
     // ========================================================================= //

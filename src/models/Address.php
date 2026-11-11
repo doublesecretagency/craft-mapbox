@@ -157,8 +157,8 @@ class Address extends Location
             return null;
         }
 
-        // Return element containing this address
-        return Craft::$app->getElements()->getElementById($this->elementId);
+        // Return element containing this address, on the same site
+        return Craft::$app->getElements()->getElementById($this->elementId, null, $this->siteId);
     }
 
     /**

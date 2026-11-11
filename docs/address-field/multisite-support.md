@@ -15,7 +15,7 @@ All native translation methods are supported:
 
 ### Multisite Migration
 
-When updating the plugin to **v1.2** (Craft 4) or **v2.1** (Craft 5), a significant migration will be run in the database. If your project contains multiple sites, all existing rows in the `mapbox_addresses` table will be duplicated for each site.
+When updating the plugin to **v1.2** (Craft 4) or **v2.2** (Craft 5), a significant migration will be run in the database. If your project contains multiple sites, all existing rows in the `mapbox_addresses` table will be duplicated for each site.
 
 Effectively, the number of existing table rows will be <span style="text-decoration:underline">multiplied</span> by the number of sites in your project.
 
