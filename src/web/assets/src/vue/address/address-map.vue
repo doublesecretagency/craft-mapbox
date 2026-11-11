@@ -113,6 +113,17 @@ export default {
                         lat: parseFloat(startingPosition.lat)
                     }
 
+                    // If an address was chosen while the map was loading
+                    if (addressStore.validateCoords(addressStore.data.coords)) {
+                        // Start from the chosen address
+                        startingPosition = addressStore.data.coords;
+                        // Center the map on it
+                        mapCenter = {
+                            lng: parseFloat(startingPosition.lng),
+                            lat: parseFloat(startingPosition.lat)
+                        };
+                    }
+
                     // Set map options
                     const mapOptions = {
                         'accessToken': window.mapboxAccessToken,
@@ -300,6 +311,11 @@ export default {
          */
         _updateMarkerPosition()
         {
+            // If the map isn't ready yet, bail
+            if (!this.marker) {
+                return;
+            }
+
             // Get the Pinia store
             const addressStore = useAddressStore()
 
@@ -329,6 +345,11 @@ export default {
          */
         _updateZoomLevel()
         {
+            // If the map isn't ready yet, bail
+            if (!this.map) {
+                return;
+            }
+
             // Get the Pinia store
             const addressStore = useAddressStore();
 

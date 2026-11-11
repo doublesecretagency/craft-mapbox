@@ -18056,6 +18056,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             lat: parseFloat(startingPosition.lat)
           };
 
+          // If an address was chosen while the map was loading
+          if (addressStore.validateCoords(addressStore.data.coords)) {
+            // Start from the chosen address
+            startingPosition = addressStore.data.coords;
+            // Center the map on it
+            mapCenter = {
+              lng: parseFloat(startingPosition.lng),
+              lat: parseFloat(startingPosition.lat)
+            };
+          }
+
           // Set map options
           var mapOptions = {
             'accessToken': window.mapboxAccessToken,
@@ -18218,6 +18229,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Update the marker position.
      */
     _updateMarkerPosition: function _updateMarkerPosition() {
+      // If the map isn't ready yet, bail
+      if (!this.marker) {
+        return;
+      }
+
       // Get the Pinia store
       var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
 
@@ -18245,6 +18261,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
      * Update the zoom level.
      */
     _updateZoomLevel: function _updateZoomLevel() {
+      // If the map isn't ready yet, bail
+      if (!this.map) {
+        return;
+      }
+
       // Get the Pinia store
       var addressStore = (0,_stores_AddressStore__WEBPACK_IMPORTED_MODULE_0__.useAddressStore)();
 
@@ -19217,10 +19238,46 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// Initialize the number of attempts to load the Mapbox libraries
+var librariesAttempts = 0;
+
+// Whether a retry is already waiting
+var retryPending = false;
+
 // Initialize Vue instances
 window.initAddressField = function () {
   // If configs aren't loaded yet, bail
   if ('undefined' === typeof addressFieldConfigs) {
+    return;
+  }
+
+  // If the Mapbox libraries haven't loaded yet
+  if (!window.mapboxgl || !window.mapboxsearchcore) {
+    // If a retry is already waiting, bail
+    if (retryPending) {
+      return;
+    }
+
+    // If out of time
+    if (librariesAttempts++ >= 100) {
+      // Log warning
+      console.warn('[MB] Unable to load the Mapbox libraries.');
+      // Bail
+      return;
+    }
+
+    // Mark a retry as waiting
+    retryPending = true;
+
+    // Try again shortly
+    setTimeout(function () {
+      // Clear the waiting retry
+      retryPending = false;
+      // Initialize any fields which are ready
+      window.initAddressField();
+    }, 100);
+
+    // Bail for now
     return;
   }
 
@@ -19238,6 +19295,11 @@ window.initAddressField = function () {
       continue;
     }
 
+    // If this field is already running, skip it
+    if (element.dataset.mbMounted) {
+      continue;
+    }
+
     // Initialize Vue instance for a single Address field
     var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)(_vue_address_address__WEBPACK_IMPORTED_MODULE_1__["default"], config);
 
@@ -19246,6 +19308,9 @@ window.initAddressField = function () {
 
     // Mount to DOM
     app.mount(element);
+
+    // Mark this field as running
+    element.dataset.mbMounted = 'true';
   }
 };
 

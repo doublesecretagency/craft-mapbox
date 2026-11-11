@@ -8,6 +8,10 @@
 ### Added
 - [Multisite support](https://plugins.doublesecretagency.com/mapbox/address-field/multisite-support/). ([#5](https://github.com/doublesecretagency/craft-mapbox/issues/5))
 
+### Fixed
+- Fixed Address fields failing to load in slideouts and new Matrix blocks on Craft versions prior to 4.18. ([#15](https://github.com/doublesecretagency/craft-mapbox/issues/15), [#17](https://github.com/doublesecretagency/craft-mapbox/pull/17))
+- Fixed an error when an address was chosen before the Address field's map had finished loading.
+
 ## 1.1.3 - 2023-12-19
 
 ### Added
