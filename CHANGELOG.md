@@ -14,6 +14,9 @@
 - Fixed Address field autocomplete repeating the street address in the `name` subfield. ([#14](https://github.com/doublesecretagency/craft-mapbox/issues/14))
 - Fixed Address field autocomplete putting the full address of some places into the `street1` subfield.
 - Fixed showing map after searching.
+- Fixed dynamic maps created in JavaScript failing to render. ([#6](https://github.com/doublesecretagency/craft-mapbox/issues/6))
+- Fixed the `mapbox` JavaScript object not being available to inline scripts.
+- Fixed minor popup issues.
 
 ## 1.1.3 - 2023-12-19
 

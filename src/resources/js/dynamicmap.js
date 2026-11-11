@@ -137,12 +137,12 @@ function DynamicMap(locations, options) {
             var coords = locations[i];
 
             // If coordinates are not valid, skip
-            if (!coords.hasOwnProperty('lat') || !coords.hasOwnProperty('lng')) {
+            if (!coords.hasOwnProperty('lng') || !coords.hasOwnProperty('lat')) {
                 continue;
             }
 
             // Get marker ID or generate a random one
-            var markerId = options.id || coords.id || this._generateId('marker');
+            var markerId = coords.id || options.id || this._generateId('marker');
 
             // Set marker ID back to coordinates object
             coords.id = markerId;
@@ -713,13 +713,16 @@ function DynamicMap(locations, options) {
         }
 
         // Specify map container
-        mapOptions.container = this.id;
+        mapOptions.container = this.div;
 
         // Set access token
         mapboxgl.accessToken = window.mapboxAccessToken;
 
         // Initialize map data
         this._map = new mapboxgl.Map(mapOptions);
+
+        // Keep the map sized to its container, wherever it ends up
+        new ResizeObserver(() => this._map.resize()).observe(this.div);
     };
 
     // Create a new marker object
@@ -783,7 +786,7 @@ function DynamicMap(locations, options) {
         const markerPopup = mapPopups[markerId] || null;
 
         // If no corresponding popup, bail
-        if (!markerPopup) {
+        if (!markerPopup || !markerPopup.content) {
             return;
         }
 
