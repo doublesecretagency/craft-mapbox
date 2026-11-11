@@ -13,6 +13,7 @@
 - Fixed an error when an address was chosen before the Address field's map had finished loading.
 - Fixed Address field autocomplete repeating the street address in the `name` subfield. ([#14](https://github.com/doublesecretagency/craft-mapbox/issues/14))
 - Fixed Address field autocomplete putting the full address of some places into the `street1` subfield.
+- Fixed showing map after searching.
 
 ## 1.1.3 - 2023-12-19
 
