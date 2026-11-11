@@ -1,8 +1,10 @@
 <?php
 namespace doublesecretagency\mapbox\tests\unit;
 
+use craft\elements\Entry;
 use doublesecretagency\mapbox\enums\Defaults;
 use doublesecretagency\mapbox\fields\AddressField;
+use doublesecretagency\mapbox\models\Address;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -219,5 +221,104 @@ class AddressFieldNormalizationTest extends TestCase
     public function testAnUnrecognizedShapeReturnsTheDefaults(): void
     {
         $this->assertSame(Defaults::SUBFIELDCONFIG, $this->_normalize(['foo' => 'bar']));
+    }
+
+    // ========================================================================= //
+    // normalizeValue (array values)
+    // ========================================================================= //
+
+    /**
+     * Build an entry on a given site without booting Craft.
+     */
+    private function _entry(int $id, int $siteId): Entry
+    {
+        $entry = (new ReflectionClass(Entry::class))->newInstanceWithoutConstructor();
+        $entry->id = $id;
+        $entry->siteId = $siteId;
+        return $entry;
+    }
+
+    /**
+     * Matrix, duplicate, copy-to-site and draft flows normalize an array that
+     * still carries the SOURCE element's IDs. The element being normalized
+     * must win, or address.element and address.siteId point at the source.
+     */
+    public function testAnArrayValueTakesTheIdsOfTheElementBeingNormalized(): void
+    {
+        $this->field->id = 7;
+        $address = $this->field->normalizeValue(
+            ['elementId' => 100, 'siteId' => 1, 'fieldId' => 99, 'city' => 'Austin'],
+            $this->_entry(200, 2)
+        );
+
+        $this->assertSame(200, $address->elementId);
+        $this->assertSame(2, $address->siteId);
+        $this->assertSame(7, $address->fieldId);
+        $this->assertSame('Austin', $address->city);
+    }
+
+    /**
+     * An unsaved element still wins: its null ID beats an ID the value
+     * carried in from somewhere else.
+     */
+    public function testAnArrayValueOnAnUnsavedElementTakesItsNullId(): void
+    {
+        $this->field->id = 7;
+        $entry = $this->_entry(1, 2);
+        $entry->id = null;
+        $address = $this->field->normalizeValue(['elementId' => 100, 'siteId' => 1], $entry);
+
+        $this->assertNull($address->elementId);
+        $this->assertSame(2, $address->siteId);
+    }
+
+    /**
+     * Propagation, drafts and duplicates hand over the source element's
+     * model. The element being normalized gets a copy with its own IDs, and
+     * the source's model is left alone.
+     */
+    public function testAModelFromAnotherElementGetsACopyWithThisElementsIds(): void
+    {
+        $this->field->id = 7;
+        $source = new Address(['id' => 55, 'elementId' => 100, 'siteId' => 1, 'fieldId' => 7, 'city' => 'Austin']);
+        $address = $this->field->normalizeValue($source, $this->_entry(100, 2));
+
+        $this->assertNotSame($source, $address);
+        // The id is kept: maps use it for marker IDs, and saving doesn't
+        $this->assertSame([55, 100, 2, 7, 'Austin'], [$address->id, $address->elementId, $address->siteId, $address->fieldId, $address->city]);
+        $this->assertSame([55, 1], [$source->id, $source->siteId]);
+    }
+
+    public function testAModelForThisElementIsReturnedAsIs(): void
+    {
+        $this->field->id = 7;
+        $model = new Address(['elementId' => 100, 'siteId' => 2, 'fieldId' => 7]);
+
+        $this->assertSame($model, $this->field->normalizeValue($model, $this->_entry(100, 2)));
+        $this->assertSame($model, $this->field->normalizeValue($model));
+    }
+
+    public function testAnArrayValueWithoutAnElementKeepsItsOwnIds(): void
+    {
+        $this->field->id = null;
+        $address = $this->field->normalizeValue(['elementId' => 100, 'siteId' => 3, 'fieldId' => 99]);
+
+        $this->assertSame(100, $address->elementId);
+        $this->assertSame(3, $address->siteId);
+        $this->assertSame(99, $address->fieldId);
+    }
+
+    /**
+     * A missing ID stays null. Casting it to 0 would name a site, element or
+     * field that doesn't exist, and `is null` checks would never match.
+     */
+    public function testAnArrayValueWithNoIdsLeavesThemNull(): void
+    {
+        $this->field->id = null;
+        $address = $this->field->normalizeValue(['city' => 'Austin']);
+
+        $this->assertNull($address->elementId);
+        $this->assertNull($address->siteId);
+        $this->assertNull($address->fieldId);
     }
 }

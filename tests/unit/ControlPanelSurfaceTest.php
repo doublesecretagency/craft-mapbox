@@ -76,7 +76,8 @@ class ControlPanelSurfaceTest extends TestCase
         $install = file_get_contents((new ReflectionClass(Install::class))->getFileName());
 
         $this->assertSame('{{%mapbox_addresses}}', AddressRecord::tableName());
-        $this->assertStringContainsString("createTable('{{%mapbox_addresses}}'", $install);
+        $this->assertSame(AddressRecord::tableName(), Install::MAPBOX_ADDRESSES);
+        $this->assertStringContainsString('createTable(static::MAPBOX_ADDRESSES', $install);
     }
 
     // ========================================================================= //

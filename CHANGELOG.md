@@ -2,11 +2,18 @@
 
 ## Unreleased
 
+> [!WARNING]
+> This update runs a [significant migration](https://plugins.doublesecretagency.com/mapbox/address-field/multisite-support/#multisite-migration), which may notably increase the size of the `mapbox_addresses` table for multisite projects. Please ensure that you have backed up the database before performing this migration.
+
+### Added
+- [Multisite support](https://plugins.doublesecretagency.com/mapbox/address-field/multisite-support/). ([#5](https://github.com/doublesecretagency/craft-mapbox/issues/5))
+
 ### Changed
 - Dynamic map JavaScript now loads through an asset bundle, as recommended for Craft Cloud.
 
 ### Fixed
 - Fixed compatibility issue with Craft Cloud.
+- Fixed converting Google Maps Address fields on databases with a table prefix.
 - Fixed a bug where [`getDistance()`](https://plugins.doublesecretagency.com/mapbox/models/location-model/#getdistance-location-units-miles) always returned 0.
 - Fixed `getDistance()` measuring to 0,0 when the target location has no coordinates.
 - Fixed the welcome screen icon on Craft Cloud.

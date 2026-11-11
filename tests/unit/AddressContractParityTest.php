@@ -149,12 +149,12 @@ class AddressContractParityTest extends TestCase
         $install = static::_block(static::_read('src/migrations/Install.php'), 'private function _createTables');
         $installKeys = array_diff(
             static::_arrayKeys($install),
-            ['id', 'elementId', 'fieldId', 'dateCreated', 'dateUpdated', 'uid']
+            ['id', 'elementId', 'siteId', 'fieldId', 'dateCreated', 'dateUpdated', 'uid']
         );
 
         // Record docblock properties, minus the bookkeeping and the query-only `distance`
         preg_match_all('/@property \S+ \$(\w+)/', static::_read('src/records/Address.php'), $record);
-        $recordKeys = array_diff($record[1], ['id', 'elementId', 'fieldId', 'distance']);
+        $recordKeys = array_diff($record[1], ['id', 'elementId', 'siteId', 'fieldId', 'distance']);
 
         // Model properties declared on Address or Location
         $modelKeys = array_diff(
@@ -162,7 +162,7 @@ class AddressContractParityTest extends TestCase
                 static fn(ReflectionProperty $p): string => $p->getName(),
                 (new ReflectionClass(Address::class))->getProperties(ReflectionProperty::IS_PUBLIC)
             ),
-            ['id', 'elementId', 'fieldId', 'distance']
+            ['id', 'elementId', 'siteId', 'fieldId', 'distance']
         );
 
         // Search keywords read `$value->x`
@@ -195,7 +195,7 @@ class AddressContractParityTest extends TestCase
                 'normalizeValue() array branch',
                 array_values(array_diff(
                     static::_arrayKeys(static::_block($field, 'if (is_array($value))')),
-                    ['elementId', 'fieldId']
+                    ['elementId', 'siteId', 'fieldId']
                 )),
                 $all,
             ],

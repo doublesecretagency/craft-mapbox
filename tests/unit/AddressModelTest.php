@@ -4,6 +4,7 @@ namespace doublesecretagency\mapbox\tests\unit;
 use doublesecretagency\mapbox\models\Address;
 use doublesecretagency\mapbox\models\Location;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * Pure-unit tests for the Address model.
@@ -196,6 +197,16 @@ class AddressModelTest extends TestCase
     public function testGetElementWithoutAnElementIdIsNull(): void
     {
         $this->assertNull((new Address())->getElement());
+    }
+
+    /**
+     * On a multisite project the Address belongs to one site, so its element
+     * must be loaded on that same site (source-level: the lookup needs Craft).
+     */
+    public function testGetElementLoadsTheElementOnTheAddressesSite(): void
+    {
+        $source = file_get_contents((new ReflectionClass(Address::class))->getFileName());
+        $this->assertStringContainsString('getElementById($this->elementId, null, $this->siteId)', $source);
     }
 
     public function testGetFieldWithoutAFieldIdIsNull(): void

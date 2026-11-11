@@ -13,6 +13,7 @@ namespace doublesecretagency\mapbox\migrations;
 
 use Craft;
 use craft\db\Migration;
+use craft\db\Table;
 
 /**
  * Installation Migration
@@ -22,13 +23,18 @@ class Install extends Migration
 {
 
     /**
+     * Table for storing Address (Mapbox) data.
+     */
+    public const MAPBOX_ADDRESSES = '{{%mapbox_addresses}}';
+
+    /**
      * @inheritdoc
      */
     public function safeUp(): void
     {
         // If the table already exists, move on
         // (gracefully recover from a previous failed migration attempt)
-        if ($this->db->tableExists('{{%mapbox_addresses}}')) {
+        if ($this->db->tableExists(static::MAPBOX_ADDRESSES)) {
             $message = "The `mapbox_addresses` table already exists. We may be recovering from a previously failed migration.";
             Craft::warning($message, __METHOD__);
             return;
@@ -45,7 +51,7 @@ class Install extends Migration
      */
     public function safeDown(): void
     {
-        $this->dropTableIfExists('{{%mapbox_addresses}}');
+        $this->dropTableIfExists(static::MAPBOX_ADDRESSES);
     }
 
     /**
@@ -53,9 +59,10 @@ class Install extends Migration
      */
     private function _createTables(): void
     {
-        $this->createTable('{{%mapbox_addresses}}', [
+        $this->createTable(static::MAPBOX_ADDRESSES, [
             'id'           => $this->primaryKey(),
             'elementId'    => $this->integer()->notNull(),
+            'siteId'       => $this->integer()->notNull(),
             'fieldId'      => $this->integer()->notNull(),
             'formatted'    => $this->string(),
             'raw'          => $this->text(),
@@ -83,8 +90,13 @@ class Install extends Migration
      */
     private function _createIndexes(): void
     {
-        $this->createIndex(null, '{{%mapbox_addresses}}', ['elementId']);
-        $this->createIndex(null, '{{%mapbox_addresses}}', ['fieldId']);
+        $this->createIndex(null, static::MAPBOX_ADDRESSES, ['elementId']);
+        $this->createIndex(null, static::MAPBOX_ADDRESSES, ['siteId']);
+        $this->createIndex(null, static::MAPBOX_ADDRESSES, ['fieldId']);
+        $this->createIndex(null, static::MAPBOX_ADDRESSES, ['siteId', 'fieldId']);
+        $this->createIndex(null, static::MAPBOX_ADDRESSES, ['elementId', 'siteId']);
+        $this->createIndex(null, static::MAPBOX_ADDRESSES, ['elementId', 'fieldId']);
+        $this->createIndex(null, static::MAPBOX_ADDRESSES, ['elementId', 'siteId', 'fieldId'], true);
     }
 
     /**
@@ -92,8 +104,9 @@ class Install extends Migration
      */
     private function _addForeignKeys(): void
     {
-        $this->addForeignKey(null, '{{%mapbox_addresses}}', ['elementId'], '{{%elements}}', ['id'], 'CASCADE');
-        $this->addForeignKey(null, '{{%mapbox_addresses}}', ['fieldId'],   '{{%fields}}',   ['id'], 'CASCADE');
+        $this->addForeignKey(null, static::MAPBOX_ADDRESSES, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE');
+        $this->addForeignKey(null, static::MAPBOX_ADDRESSES, ['siteId'],    Table::SITES,    ['id'], 'CASCADE');
+        $this->addForeignKey(null, static::MAPBOX_ADDRESSES, ['fieldId'],   Table::FIELDS,   ['id'], 'CASCADE');
     }
 
 }

@@ -93,6 +93,8 @@ tree. The recipe is in `~/.claude/instructions/plugin-tests.md`.
   scripts (`DynamicMapScriptsTest`)
 - Schema drift between the install migration, the upgrade migration, the
   record and the model
+- The multisite migration losing a site's address, failing on duplicate rows,
+  or failing again on a retry (`MultisiteMigrationTest`)
 - A column added to the field type conversion that one of the tables lacks
 - Missing event registrations in the plugin's `init()`
 - Setting defaults changing, or the config template falling out of step

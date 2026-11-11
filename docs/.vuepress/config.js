@@ -85,6 +85,7 @@ module.exports = {
                 'how-it-works',
                 'settings',
                 'twig',
+                'multisite-support',
             ],
             '/dynamic-maps/': [
                 {

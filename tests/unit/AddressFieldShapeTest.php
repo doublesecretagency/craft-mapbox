@@ -44,8 +44,59 @@ class AddressFieldShapeTest extends TestCase
 
     public function testStoresNothingInTheContentColumn(): void
     {
-        // Data lives only in `mapbox_addresses`.
-        $this->assertFalse(AddressField::hasContentColumn());
+        // Data lives only in `mapbox_addresses`. Before 2.2.0 the field only had
+        // Craft 4's `hasContentColumn()`, which Craft 5 never calls, so every
+        // value was also serialized into `elements_sites.content`.
+        $this->assertNull(AddressField::dbType());
+        $this->assertFalse(method_exists(AddressField::class, 'hasContentColumn'), 'hasContentColumn() is a Craft 4 API.');
+    }
+
+    /**
+     * Rows are per site, so removing an element from one site removes that
+     * site's row. Otherwise re-adding the element shows the old address.
+     */
+    public function testRemovingAnElementFromASiteDeletesThatSitesAddress(): void
+    {
+        $this->assertSame(AddressField::class, $this->reflection->getMethod('afterElementDeleteForSite')->getDeclaringClass()->getName());
+        $this->assertMatchesRegularExpression(
+            "/function afterElementDeleteForSite[\\s\\S]*?AddressRecord::deleteAll\\(\\[\\s*'elementId' => \\\$element->id,\\s*'siteId'\\s*=> \\\$element->siteId,\\s*'fieldId'\\s*=> \\\$this->id,/",
+            $this->source
+        );
+    }
+
+    /**
+     * A new element's Address is loaded before the element has an ID (drafts,
+     * duplicates). After a successful save, only such a model is pointed at
+     * the saved row: a model shared with a cloned element is left alone.
+     */
+    public function testSavingPointsANewAddressAtItsSavedRow(): void
+    {
+        $this->assertStringContainsString('$saved = $record->save();', $this->source);
+        $this->assertStringContainsString('if ($saved && $data instanceof AddressModel && $data->elementId === null) {', $this->source);
+    }
+
+    /**
+     * Craft's save path drops an element's unsupported sites without calling
+     * afterElementDeleteForSite, so the rows of those sites are cleaned up
+     * once the element is saved on every site (never for a new element).
+     */
+    public function testSavingDeletesAddressesOfSitesTheElementLeft(): void
+    {
+        $this->assertSame(AddressField::class, $this->reflection->getMethod('afterElementPropagate')->getDeclaringClass()->getName());
+        $this->assertMatchesRegularExpression(
+            "/function afterElementPropagate[\\s\\S]*?if \\(!\\\$isNew\\) \\{[\\s\\S]*?supportedSitesForElement\\(\\\$element\\)[\\s\\S]*?\\['not', \\['siteId' => \\\$siteIds\\]\\],/",
+            $this->source
+        );
+        $this->assertStringNotContainsString('$element->propagating', $this->source);
+    }
+
+    public function testEveryTranslationMethodIsSupported(): void
+    {
+        // With no dbType(), Craft's default would allow only "Not translatable"
+        $this->assertSame(
+            [AddressField::TRANSLATION_METHOD_NONE, AddressField::TRANSLATION_METHOD_SITE, AddressField::TRANSLATION_METHOD_SITE_GROUP, AddressField::TRANSLATION_METHOD_LANGUAGE, AddressField::TRANSLATION_METHOD_CUSTOM],
+            AddressField::supportedTranslationMethods()
+        );
     }
 
     public function testDisplayNameIsAddressMapbox(): void

@@ -5,6 +5,7 @@ use craft\db\Migration;
 use doublesecretagency\mapbox\migrations\Install;
 use doublesecretagency\mapbox\migrations\m230720_223501_add_subfields;
 use doublesecretagency\mapbox\migrations\m231009_212501_announcements_v1_1;
+use doublesecretagency\mapbox\migrations\m240530_122024_multisite_support;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -32,7 +33,7 @@ class InstallMigrationTest extends TestCase
 
     public function testMigrationsExtendCraftsMigration(): void
     {
-        foreach ([Install::class, m230720_223501_add_subfields::class, m231009_212501_announcements_v1_1::class] as $class) {
+        foreach ([Install::class, m230720_223501_add_subfields::class, m231009_212501_announcements_v1_1::class, m240530_122024_multisite_support::class] as $class) {
             $this->assertTrue(is_subclass_of($class, Migration::class), "{$class} is not a Craft migration.");
         }
     }
@@ -40,14 +41,21 @@ class InstallMigrationTest extends TestCase
     public function testReinstallRecoversFromAPartialInstall(): void
     {
         $this->assertMatchesRegularExpression(
-            "/if \\(\\\$this->db->tableExists\\('\\{\\{%mapbox_addresses\\}\\}'\\)\\) \\{[\\s\\S]{0,300}return;/",
+            "/if \\(\\\$this->db->tableExists\\(static::MAPBOX_ADDRESSES\\)\\) \\{[\\s\\S]{0,300}return;/",
             $this->install
         );
     }
 
     public function testUninstallDropsTheTable(): void
     {
-        $this->assertStringContainsString("dropTableIfExists('{{%mapbox_addresses}}')", $this->install);
+        $this->assertStringContainsString('dropTableIfExists(static::MAPBOX_ADDRESSES)', $this->install);
+    }
+
+    public function testTheTableNameIsDefinedOnce(): void
+    {
+        // The multisite migration and the install share this constant
+        $this->assertSame('{{%mapbox_addresses}}', Install::MAPBOX_ADDRESSES);
+        $this->assertStringNotContainsString("'{{%mapbox_addresses}}', [", $this->install);
     }
 
     // ========================================================================= //
@@ -73,6 +81,7 @@ class InstallMigrationTest extends TestCase
         return [
             'id' => ['id', '$this->primaryKey()'],
             'elementId' => ['elementId', '$this->integer()->notNull()'],
+            'siteId' => ['siteId', '$this->integer()->notNull()'],
             'fieldId' => ['fieldId', '$this->integer()->notNull()'],
             'formatted' => ['formatted', $string],
             'raw' => ['raw', '$this->text()'],
@@ -104,7 +113,7 @@ class InstallMigrationTest extends TestCase
      */
     public function testColumnIsIndexed(string $column): void
     {
-        $this->assertStringContainsString("createIndex(null, '{{%mapbox_addresses}}', ['{$column}'])", $this->install);
+        $this->assertStringContainsString("createIndex(null, static::MAPBOX_ADDRESSES, ['{$column}'])", $this->install);
     }
 
     /**
@@ -114,7 +123,7 @@ class InstallMigrationTest extends TestCase
     {
         // Deleting an element or a field must take its addresses with it.
         $this->assertMatchesRegularExpression(
-            "/addForeignKey\\(null, '\\{\\{%mapbox_addresses\\}\\}', \\['{$column}'\\],\\s*'\\{\\{%{$table}\\}\\}',\\s*\\['id'\\],\\s*'CASCADE'\\)/",
+            "/addForeignKey\\(null, static::MAPBOX_ADDRESSES, \\['{$column}'\\],\\s*Table::{$table},\\s*\\['id'\\],\\s*'CASCADE'\\)/",
             $this->install
         );
     }
@@ -122,8 +131,29 @@ class InstallMigrationTest extends TestCase
     public static function indexedColumnProvider(): array
     {
         return [
-            'elementId' => ['elementId', 'elements'],
-            'fieldId' => ['fieldId', 'fields'],
+            'elementId' => ['elementId', 'ELEMENTS'],
+            'siteId' => ['siteId', 'SITES'],
+            'fieldId' => ['fieldId', 'FIELDS'],
+        ];
+    }
+
+    /**
+     * @dataProvider multisiteIndexProvider
+     */
+    public function testInstallHasTheMultisiteIndexes(string $columns, bool $unique): void
+    {
+        // A fresh install must end with the same indexes the multisite migration adds
+        $pattern = '/createIndex\\(null, static::MAPBOX_ADDRESSES, ' . preg_quote($columns, '/') . ($unique ? ', true' : '') . '\\);/';
+        $this->assertMatchesRegularExpression($pattern, $this->install);
+    }
+
+    public static function multisiteIndexProvider(): array
+    {
+        return [
+            'siteId, fieldId' => ["['siteId', 'fieldId']", false],
+            'elementId, siteId' => ["['elementId', 'siteId']", false],
+            'elementId, fieldId' => ["['elementId', 'fieldId']", false],
+            'unique elementId, siteId, fieldId' => ["['elementId', 'siteId', 'fieldId']", true],
         ];
     }
 
@@ -172,6 +202,7 @@ class InstallMigrationTest extends TestCase
         $this->assertSame([
             'm230720_223501_add_subfields.php',
             'm231009_212501_announcements_v1_1.php',
+            'm240530_122024_multisite_support.php',
         ], $files);
     }
 }

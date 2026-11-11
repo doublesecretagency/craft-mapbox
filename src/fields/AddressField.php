@@ -17,6 +17,7 @@ use craft\base\Field;
 use craft\base\PreviewableFieldInterface;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\Entry;
+use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\web\View;
 use doublesecretagency\mapbox\enums\Defaults;
@@ -116,11 +117,29 @@ class AddressField extends Field implements PreviewableFieldInterface
     }
 
     /**
+     * Store nothing in the `elements_sites.content` column.
+     *
+     * Address data lives only in the `mapbox_addresses` table.
+     *
      * @inheritdoc
      */
-    public static function hasContentColumn(): bool
+    public static function dbType(): array|string|null
     {
-        return false;
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function supportedTranslationMethods(): array
+    {
+        return [
+            self::TRANSLATION_METHOD_NONE,
+            self::TRANSLATION_METHOD_SITE,
+            self::TRANSLATION_METHOD_SITE_GROUP,
+            self::TRANSLATION_METHOD_LANGUAGE,
+            self::TRANSLATION_METHOD_CUSTOM,
+        ];
     }
 
     // ========================================================================= //
@@ -145,6 +164,7 @@ class AddressField extends Field implements PreviewableFieldInterface
         // Attempt to load an existing record
         $record = AddressRecord::findOne([
             'elementId' => $element->id,
+            'siteId'    => $element->siteId,
             'fieldId'   => $this->id,
         ]);
 
@@ -152,6 +172,7 @@ class AddressField extends Field implements PreviewableFieldInterface
         if (!$record) {
             $record = new AddressRecord([
                 'elementId' => $element->id,
+                'siteId'    => $element->siteId,
                 'fieldId'   => $this->id,
             ]);
         }
@@ -187,7 +208,59 @@ class AddressField extends Field implements PreviewableFieldInterface
         ], false);
 
         // Save record
-        $record->save();
+        $saved = $record->save();
+
+        // If the Address was loaded before the element had an ID, point it at its saved row
+        if ($saved && $data instanceof AddressModel && $data->elementId === null) {
+            $data->id        = $record->id;
+            $data->elementId = $element->id;
+            $data->siteId    = $element->siteId;
+            $data->fieldId   = $this->id;
+        }
+    }
+
+    /**
+     * After the element is saved on every site, delete the Addresses of sites it no longer exists in.
+     *
+     * Craft drops an element's unsupported sites while saving it, without calling afterElementDeleteForSite.
+     *
+     * @inheritdoc
+     */
+    public function afterElementPropagate(ElementInterface $element, bool $isNew): void
+    {
+        // A new element has no Addresses on old sites
+        if (!$isNew) {
+            // Get the sites this element exists in
+            $siteIds = array_column(ElementHelper::supportedSitesForElement($element), 'siteId');
+            // Delete the Addresses of every other site
+            if ($siteIds) {
+                AddressRecord::deleteAll(['and',
+                    ['elementId' => $element->id, 'fieldId' => $this->id],
+                    ['not', ['siteId' => $siteIds]],
+                ]);
+            }
+        }
+
+        // Continue as normal
+        parent::afterElementPropagate($element, $isNew);
+    }
+
+    /**
+     * Delete the Address of a site the element was removed from.
+     *
+     * @inheritdoc
+     */
+    public function afterElementDeleteForSite(ElementInterface $element): void
+    {
+        // Delete this site's Address
+        AddressRecord::deleteAll([
+            'elementId' => $element->id,
+            'siteId'    => $element->siteId,
+            'fieldId'   => $this->id,
+        ]);
+
+        // Continue as normal
+        parent::afterElementDeleteForSite($element);
     }
 
     /**
@@ -199,13 +272,26 @@ class AddressField extends Field implements PreviewableFieldInterface
     {
         /** @var Entry $element */
 
-        // If the value is already an Address model, return it immediately
+        // If the value is already an Address model
         if ($value instanceof AddressModel) {
+            // Return it as is, unless it belongs to another element, site or field
+            if (!$element || [$value->elementId, $value->siteId, $value->fieldId] === [$element->id, $element->siteId, $this->id]) {
+                return $value;
+            }
+            // Give a copy this element's IDs (propagation, drafts and duplicates pass the source's model)
+            $value = clone $value;
+            $value->elementId = $element->id;
+            $value->siteId    = $element->siteId;
+            $value->fieldId   = $this->id;
             return $value;
         }
 
         // If value is an array, load it directly into an Address model
         if (is_array($value)) {
+            // Get IDs, from the element being normalized if there is one
+            $elementId = ($element ? $element->id     : ($value['elementId'] ?? null));
+            $siteId    = ($element ? $element->siteId : ($value['siteId']    ?? null));
+            $fieldId   = ($this->id ?? $value['fieldId'] ?? null);
             // Get coordinates
             $lng  = ($value['lng']  ?? null);
             $lat  = ($value['lat']  ?? null);
@@ -217,8 +303,9 @@ class AddressField extends Field implements PreviewableFieldInterface
             }
             // Return Address model
             return new AddressModel([
-                'elementId'    => (int) ($element->id ?? null),
-                'fieldId'      => (int) ($this->id ?? null),
+                'elementId'    => (is_numeric($elementId) ? (int) $elementId : null),
+                'siteId'       => (is_numeric($siteId)    ? (int) $siteId    : null),
+                'fieldId'      => (is_numeric($fieldId)   ? (int) $fieldId   : null),
                 'formatted'    => (($value['formatted'] ?? null) ?: null),
                 'raw'          => (($value['raw'] ?? null) ?: null),
                 'name'         => ($value['name'] ?? null),
@@ -245,6 +332,7 @@ class AddressField extends Field implements PreviewableFieldInterface
         // Attempt to load existing record
         $record = AddressRecord::findOne([
             'elementId' => $element->id,
+            'siteId' => $element->siteId,
             'fieldId' => $this->id,
         ]);
 

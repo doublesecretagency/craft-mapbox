@@ -55,7 +55,7 @@ class PluginRegistrationTest extends TestCase
     public function testSchemaVersion(): void
     {
         // Bumping this without a migration (or the reverse) desyncs installs.
-        $this->assertSame('1.1.0', $this->reflection->getDefaultProperties()['schemaVersion']);
+        $this->assertSame('1.2.0', $this->reflection->getDefaultProperties()['schemaVersion']);
     }
 
     public function testUsesTheSettingsModel(): void

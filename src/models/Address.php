@@ -35,6 +35,11 @@ class Address extends Location
     public ?int $elementId = null;
 
     /**
+     * @var int|null ID of site containing address.
+     */
+    public ?int $siteId = null;
+
+    /**
      * @var int|null ID of field containing address.
      */
     public ?int $fieldId = null;
@@ -152,8 +157,8 @@ class Address extends Location
             return null;
         }
 
-        // Return element containing this address
-        return Craft::$app->getElements()->getElementById($this->elementId);
+        // Return element containing this address, on the same site
+        return Craft::$app->getElements()->getElementById($this->elementId, null, $this->siteId);
     }
 
     /**
