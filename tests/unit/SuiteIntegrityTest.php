@@ -185,6 +185,7 @@ class SuiteIntegrityTest extends TestCase
             'ControlPanelSurfaceTest.php',
             'DefaultsEnumTest.php',
             'DynamicMapDnaTest.php',
+            'DynamicMapScriptsTest.php',
             'FieldConversionTest.php',
             'FieldTemplatesTest.php',
             'InstallMigrationTest.php',

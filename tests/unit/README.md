@@ -89,6 +89,8 @@ tree. The recipe is in `~/.claude/instructions/plugin-tests.md`.
   on an address picked early (`AddressFieldStartupTest`)
 - The autocomplete mapping copying the street into `name`, or a place's full
   address into `street1` (`AutocompleteMappingTest`)
+- A map built in JavaScript failing to render, or `mapbox` missing for inline
+  scripts (`DynamicMapScriptsTest`)
 - Schema drift between the install migration, the upgrade migration, the
   record and the model
 - A column added to the field type conversion that one of the tables lacks

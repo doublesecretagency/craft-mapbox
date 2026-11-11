@@ -713,13 +713,16 @@ function DynamicMap(locations, options) {
         }
 
         // Specify map container
-        mapOptions.container = this.id;
+        mapOptions.container = this.div;
 
         // Set access token
         mapboxgl.accessToken = window.mapboxAccessToken;
 
         // Initialize map data
         this._map = new mapboxgl.Map(mapOptions);
+
+        // Keep the map sized to its container, wherever it ends up
+        new ResizeObserver(() => this._map.resize()).observe(this.div);
     };
 
     // Create a new marker object
