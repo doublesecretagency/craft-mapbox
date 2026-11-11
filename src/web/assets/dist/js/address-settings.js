@@ -20599,16 +20599,27 @@ var useAddressStore = (0,pinia__WEBPACK_IMPORTED_MODULE_1__.defineStore)('addres
     addressCoords.lat = lat ? parseFloat(lat.toFixed(7)) : null;
 
     // Update address meta data
-    addressData.name = feature.properties.name || null;
     addressData.mapboxId = feature.properties.mapbox_id || null;
     addressData.formatted = feature.properties.full_address || null;
     addressData.raw = JSON.stringify(feature);
 
+    // Get feature properties
+    var p = feature.properties;
+
     // Get feature context data
-    var c = feature.properties.context;
+    var c = p.context;
+
+    // Get the type of result (poi, address, street, place, etc)
+    var type = p.feature_type || null;
+
+    // Whether the result has a street
+    var hasStreet = c.address || 'street' === type;
+
+    // Get the street address as a single line
+    var street = p.address || (c.address ? c.address.name : null) || (c.street ? c.street.name : null);
 
     // Set address data to Vue
-    addressData.street1 = c.address ? c.address.name : null;
+    addressData.street1 = hasStreet ? street : null;
     addressData.street2 = null;
     addressData.city = c.place ? c.place.name : null;
     addressData.state = c.region ? c.region.region_code : null;
@@ -20616,6 +20627,15 @@ var useAddressStore = (0,pinia__WEBPACK_IMPORTED_MODULE_1__.defineStore)('addres
     addressData.neighborhood = c.neighborhood ? c.neighborhood.name : null;
     addressData.county = c.district ? c.district.name : null;
     addressData.country = c.country ? c.country.name : null;
+
+    // Whether the result is a point of interest
+    var isPoi = !type || 'poi' === type;
+
+    // Whether the name just repeats the street address
+    var repeatsStreet = p.name === addressData.street1;
+
+    // Set the name of the location
+    addressData.name = isPoi && !repeatsStreet ? p.name || null : null;
 
     // Reset suggestions
     this.suggestions = [];

@@ -12,6 +12,8 @@
 - Fixed the welcome screen icon on Craft Cloud.
 - Fixed Address fields failing to load in slideouts and new Matrix blocks on Craft versions prior to 5.10. ([#15](https://github.com/doublesecretagency/craft-mapbox/issues/15), [#17](https://github.com/doublesecretagency/craft-mapbox/pull/17))
 - Fixed an error when an address was chosen before the Address field's map had finished loading.
+- Fixed Address field autocomplete repeating the street address in the `name` subfield. ([#14](https://github.com/doublesecretagency/craft-mapbox/issues/14))
+- Fixed Address field autocomplete putting the full address of some places into the `street1` subfield.
 
 ## 2.1.0 - 2026-10-09
 

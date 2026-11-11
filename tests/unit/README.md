@@ -87,6 +87,8 @@ tree. The recipe is in `~/.claude/instructions/plugin-tests.md`.
 - A bundle naming a file that doesn't exist
 - The Address field starting before Mapbox's CDN scripts, or its map crashing
   on an address picked early (`AddressFieldStartupTest`)
+- The autocomplete mapping copying the street into `name`, or a place's full
+  address into `street1` (`AutocompleteMappingTest`)
 - Schema drift between the install migration, the upgrade migration, the
   record and the model
 - A column added to the field type conversion that one of the tables lacks

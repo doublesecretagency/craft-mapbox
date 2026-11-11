@@ -181,6 +181,7 @@ class SuiteIntegrityTest extends TestCase
             'AddressFieldStartupTest.php',
             'AddressModelTest.php',
             'AssetBundlesTest.php',
+            'AutocompleteMappingTest.php',
             'ControlPanelSurfaceTest.php',
             'DefaultsEnumTest.php',
             'DynamicMapDnaTest.php',
