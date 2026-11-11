@@ -220,16 +220,27 @@ export const useAddressStore = defineStore('address', () => {
         addressCoords.lat = (lat ? parseFloat(lat.toFixed(7)) : null);
 
         // Update address meta data
-        addressData.name      = (feature.properties.name || null);
         addressData.mapboxId  = (feature.properties.mapbox_id || null);
         addressData.formatted = (feature.properties.full_address || null);
         addressData.raw       = JSON.stringify(feature);
 
+        // Get feature properties
+        const p = feature.properties;
+
         // Get feature context data
-        const c = feature.properties.context;
+        const c = p.context;
+
+        // Get the type of result (poi, address, street, place, etc)
+        const type = (p.feature_type || null);
+
+        // Whether the result has a street
+        const hasStreet = (c.address || 'street' === type);
+
+        // Get the street address as a single line
+        const street = (p.address || (c.address ? c.address.name : null) || (c.street ? c.street.name : null));
 
         // Set address data to Vue
-        addressData.street1      = (c.address ? c.address.name : null);
+        addressData.street1      = (hasStreet ? street : null);
         addressData.street2      = null;
         addressData.city         = (c.place ? c.place.name : null);
         addressData.state        = (c.region ? c.region.region_code : null);
@@ -237,6 +248,15 @@ export const useAddressStore = defineStore('address', () => {
         addressData.neighborhood = (c.neighborhood ? c.neighborhood.name : null);
         addressData.county       = (c.district ? c.district.name : null);
         addressData.country      = (c.country ? c.country.name : null);
+
+        // Whether the result is a point of interest
+        const isPoi = (!type || 'poi' === type);
+
+        // Whether the name just repeats the street address
+        const repeatsStreet = (p.name === addressData.street1);
+
+        // Set the name of the location
+        addressData.name = ((isPoi && !repeatsStreet) ? (p.name || null) : null);
 
         // Reset suggestions
         this.suggestions = [];
