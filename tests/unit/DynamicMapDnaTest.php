@@ -55,6 +55,25 @@ class DynamicMapDnaTest extends TestCase
         $this->assertSame('my-map', $this->_map([], ['id' => 'my-map'])->id);
     }
 
+    public function testControlSwitchesInMapOptionsReachTheDnaAsGiven(): void
+    {
+        // #12: the JS reads these from `mapOptions`, so PHP must pass them through untouched
+        $mapOptions = [
+            'navigationControl' => true,
+            'scaleControl' => false,
+            'fullscreenControl' => ['position' => 'top-left'],
+            'geolocateControl' => ['trackUserLocation' => true, 'positionOptions' => ['enableHighAccuracy' => true]],
+        ];
+
+        $options = $this->_map([], ['mapOptions' => $mapOptions])->getDna()[0]['options'];
+
+        $this->assertSame($mapOptions, $options['mapOptions']);
+        $this->assertSame(
+            '{"navigationControl":true,"scaleControl":false,"fullscreenControl":{"position":"top-left"},"geolocateControl":{"trackUserLocation":true,"positionOptions":{"enableHighAccuracy":true}}}',
+            json_encode($options['mapOptions'])
+        );
+    }
+
     public function testInitialLocationsBecomeAMarkersSegment(): void
     {
         $dna = $this->_map(self::A)->getDna();

@@ -50,7 +50,7 @@ Once you have the map object in hand, you can then chain other methods to furthe
 | `zoom`          | _int_             | <span style="white-space:nowrap">via `fitBounds`</span> | Set the default zoom level of the map. <span style="white-space:nowrap">(`1`-`22`)</span>
 | `center`        | [coords](/models/coordinates/) | <span style="white-space:nowrap">via `fitBounds`</span> | Set the center position of the map.
 | `style`         | _string_\|_object_ | _null_  | A string or object declaring the [map style](/guides/styling-a-map/).
-| `mapOptions`    | _object_          | _null_  | Accepts any [`Map` options](https://docs.mapbox.com/mapbox-gl-js/api/map/#map-parameters).
+| `mapOptions`    | _object_          | _null_  | Accepts any [`Map` options](https://docs.mapbox.com/mapbox-gl-js/api/map/#map-parameters), plus switches for [map controls](/guides/showing-map-controls/).
 | `markerOptions` | _object_          | _null_  | Accepts any [`Marker` options](https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker-parameters)
 | `popupOptions`  | _object_          | _null_  | Accepts any [`Popup` options](https://docs.mapbox.com/mapbox-gl-js/api/markers/#popup-parameters)
 | `popupTemplate` | _string_          | _null_  | Template path to use for creating [popups](/dynamic-maps/popups/).

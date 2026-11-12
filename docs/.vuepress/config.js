@@ -64,6 +64,7 @@ module.exports = {
                         {text: 'Opening Popups', link: '/guides/opening-popups/'},
                         {text: 'Changing the Map Language', link: '/guides/changing-map-language/'},
                         {text: 'Prevent Zoom When Scrolling', link: '/guides/prevent-zoom-when-scrolling/'},
+                        {text: 'Showing Map Controls', link: '/guides/showing-map-controls/'},
                         {text: 'Bermuda Triangle', link: '/guides/bermuda-triangle/'},
                         {text: 'Converting from Google Maps', link: '/guides/converting-from-google-maps/'},
                     ] },
@@ -161,6 +162,7 @@ module.exports = {
                         'opening-popups',
                         'changing-map-language',
                         'prevent-zoom-when-scrolling',
+                        'showing-map-controls',
                         'bermuda-triangle',
                         'converting-from-google-maps',
                     ]

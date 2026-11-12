@@ -7,6 +7,7 @@
 
 ### Added
 - [Multisite support](https://plugins.doublesecretagency.com/mapbox/address-field/multisite-support/). ([#5](https://github.com/doublesecretagency/craft-mapbox/issues/5))
+- Dynamic maps can now show [navigation, fullscreen, scale and geolocate controls](https://plugins.doublesecretagency.com/mapbox/guides/showing-map-controls/). ([#12](https://github.com/doublesecretagency/craft-mapbox/issues/12))
 
 ### Changed
 - Dynamic map JavaScript now loads through an asset bundle, as recommended for Craft Cloud.

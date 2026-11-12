@@ -49,7 +49,7 @@ Most (though not all) of these options are available across JavaScript, Twig, an
 | `zoom`          | JS/Twig/PHP | Set the default zoom level of the map. <span style="white-space:nowrap">(`1`-`22`)</span>
 | `center`        | JS/Twig/PHP | Set the center position of the map.
 | `style`         | JS/Twig/PHP | A string or object declaring the [map style](/guides/styling-a-map/).
-| `mapOptions`    | JS/Twig/PHP | Accepts any [`Map` parameters](https://docs.mapbox.com/mapbox-gl-js/api/map/#map-parameters).
+| `mapOptions`    | JS/Twig/PHP | Accepts any [`Map` parameters](https://docs.mapbox.com/mapbox-gl-js/api/map/#map-parameters), plus switches for [map controls](/guides/showing-map-controls/).
 | `markerOptions` | JS/Twig/PHP | Accepts any [`Marker` parameters](https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker-parameters)
 | `popupOptions`  | JS/Twig/PHP | Accepts any [`Popup` parameters](https://docs.mapbox.com/mapbox-gl-js/api/markers/#popup-parameters)
 | `popupTemplate` | Twig/PHP    | Template path to use for creating [popups](/dynamic-maps/popups/).
