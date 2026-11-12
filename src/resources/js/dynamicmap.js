@@ -721,6 +721,28 @@ function DynamicMap(locations, options) {
         // Initialize map data
         this._map = new mapboxgl.Map(mapOptions);
 
+        // Add each control switched on in the map options
+        const controls = {
+            navigationControl: 'NavigationControl',
+            fullscreenControl: 'FullscreenControl',
+            scaleControl: 'ScaleControl',
+            geolocateControl: 'GeolocateControl'
+        };
+        for (const [key, controlClass] of Object.entries(controls)) {
+            const value = mapOptions[key];
+            if (!value) {
+                continue;
+            }
+            // Copy the control's options, so the caller's own object stays intact
+            let {position, ...controlOptions} = (typeof value === 'object') ? value : {};
+            // An unknown position would break the map, so fall back to the default corner
+            if (position && !['top-left', 'top-right', 'bottom-left', 'bottom-right'].includes(position)) {
+                console.warn(`[MB] Invalid position "${position}" for ${key}, using the default corner.`);
+                position = undefined;
+            }
+            this._map.addControl(new mapboxgl[controlClass](controlOptions), position);
+        }
+
         // Keep the map sized to its container, wherever it ends up
         new ResizeObserver(() => this._map.resize()).observe(this.div);
     };
