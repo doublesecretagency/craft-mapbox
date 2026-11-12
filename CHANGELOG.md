@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 - 2026-11-12
 
 > [!WARNING]
 > This update runs a [significant migration](https://plugins.doublesecretagency.com/mapbox/address-field/multisite-support/#multisite-migration), which may notably increase the size of the `mapbox_addresses` table for multisite projects. Please ensure that you have backed up the database before performing this migration.
